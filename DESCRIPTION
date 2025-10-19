@@ -1,6 +1,6 @@
 Package: afcommon
 Title: AF Common Functions
-Version: 0.12.0
+Version: 0.13.0
 Authors@R: 
     person("Amir", "Freund", email = "amir61@gmail.com", role = c("aut", "cre"))
 Description: Personal collection of common functions.
