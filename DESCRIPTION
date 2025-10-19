@@ -1,6 +1,10 @@
 Package: afcommon
-Version: 0.1.0
 Title: AF Common Functions
-Description: Personal collection of common functions
-Author: Amir Freund
-License: MIT
+Version: 0.1.0
+Authors@R: 
+    person("Amir", "Freund", email = "amir61@gmail.com", role = c("aut", "cre"))
+Description: Personal collection of common functions.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.3.2
