@@ -19,6 +19,10 @@ new_version <- af_release_package(
 # --- Install and reload the new version cleanly ---
 unloadNamespace("afcommon")  # Ensure nothing is attached
 remotes::install_github(paste0("amirhome61/afcommon@v", new_version))
+
+# Remove old definitions from the global environment
+rm(list = c("af_create_package", "af_release_package"))
+
 library(afcommon)
 
 message(sprintf("✅ afcommon version %s loaded successfully.", new_version))
