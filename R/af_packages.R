@@ -323,7 +323,7 @@ af_create_package <- function(
 
   cat(
     sprintf(
-      "new_version <- af_release_package(\n  package_path = '.',\n  github_repo = '%s'\n)\n\n",
+      "new_version <- af_release_package(\n  package_path = '.',\n  github_repo = '%s',\n  version_bump = 'minor',\n  release_message = 'New Release'\n)\n\n",
       github_repo %||% ""
     ),
     file = runner_file,
