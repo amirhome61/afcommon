@@ -1,8 +1,14 @@
 # --- Automated R package release function with roxygen2 documentation ---
 # Requires: desc, remotes, devtools packages
-if (!requireNamespace("desc", quietly = TRUE)) install.packages("desc")
-if (!requireNamespace("remotes", quietly = TRUE)) install.packages("remotes")
-if (!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")
+if (!requireNamespace("desc", quietly = TRUE)) {
+  install.packages("desc")
+}
+if (!requireNamespace("remotes", quietly = TRUE)) {
+  install.packages("remotes")
+}
+if (!requireNamespace("devtools", quietly = TRUE)) {
+  install.packages("devtools")
+}
 
 library(desc)
 library(remotes)
@@ -52,16 +58,25 @@ library(devtools)
 #' }
 #'
 #' @export
-af_release_package <- function(package_path = ".",
-                               github_repo,
-                               version_bump = "minor",
-                               initial_version = NULL,
-                               release_message = NULL) {
-
-  if (!requireNamespace("desc", quietly = TRUE)) install.packages("desc")
-  if (!requireNamespace("remotes", quietly = TRUE)) install.packages("remotes")
-  if (!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")
-  if (!requireNamespace("usethis", quietly = TRUE)) install.packages("usethis")
+af_release_package <- function(
+  package_path = ".",
+  github_repo,
+  version_bump = "minor",
+  initial_version = NULL,
+  release_message = NULL
+) {
+  if (!requireNamespace("desc", quietly = TRUE)) {
+    install.packages("desc")
+  }
+  if (!requireNamespace("remotes", quietly = TRUE)) {
+    install.packages("remotes")
+  }
+  if (!requireNamespace("devtools", quietly = TRUE)) {
+    install.packages("devtools")
+  }
+  if (!requireNamespace("usethis", quietly = TRUE)) {
+    install.packages("usethis")
+  }
   library(desc)
   library(remotes)
   library(devtools)
@@ -91,10 +106,21 @@ af_release_package <- function(package_path = ".",
     ver_parts <- unclass(old_version)[[1]]
 
     # Increment based on version_bump
-    new_version <- switch(version_bump,
+    new_version <- switch(
+      version_bump,
       "major" = package_version(paste(ver_parts[1] + 1, 0, 0, sep = ".")),
-      "minor" = package_version(paste(ver_parts[1], ver_parts[2] + 1, 0, sep = ".")),
-      "patch" = package_version(paste(ver_parts[1], ver_parts[2], ver_parts[3] + 1, sep = ".")),
+      "minor" = package_version(paste(
+        ver_parts[1],
+        ver_parts[2] + 1,
+        0,
+        sep = "."
+      )),
+      "patch" = package_version(paste(
+        ver_parts[1],
+        ver_parts[2],
+        ver_parts[3] + 1,
+        sep = "."
+      )),
       stop("version_bump must be 'major', 'minor', or 'patch'")
     )
     d$set_version(new_version)
@@ -119,7 +145,11 @@ af_release_package <- function(package_path = ".",
   # ----------------------------
   # 4. Create Git tag
   # ----------------------------
-  tag_message <- ifelse(is.null(release_message), commit_message, release_message)
+  tag_message <- ifelse(
+    is.null(release_message),
+    commit_message,
+    release_message
+  )
   tag_name <- paste0("v", new_version)
   system(sprintf("git tag -a %s -m %s", tag_name, shQuote(tag_message)))
   message(sprintf("Created Git tag: %s", tag_name))
@@ -194,80 +224,154 @@ af_release_package <- function(package_path = ".",
 #' )
 #' }
 #' @export
-af_create_package <- function(package_name,
-                              package_path = ".",
-                              github_repo = NULL,
-                              author_name = "Your Name",
-                              author_email = "you@example.com",
-                              license = "MIT") {
+af_create_package <- function(
+  package_name,
+  package_path = ".",
+  github_repo = NULL,
+  author_name = "Your Name",
+  author_email = "you@example.com",
+  license = "MIT"
+) {
+  if (!requireNamespace("usethis", quietly = TRUE)) {
+    install.packages("usethis")
+  }
+  if (!requireNamespace("desc", quietly = TRUE)) {
+    install.packages("desc")
+  }
+  if (!requireNamespace("git2r", quietly = TRUE)) {
+    install.packages("git2r")
+  }
 
-  if (!requireNamespace("usethis", quietly = TRUE)) install.packages("usethis")
-  if (!requireNamespace("desc", quietly = TRUE)) install.packages("desc")
-  if (!requireNamespace("git2r", quietly = TRUE)) install.packages("git2r")
   library(usethis)
   library(desc)
   library(git2r)
 
-  # 1. Full path to new package
+  # Full path to new package
   full_path <- file.path(package_path, package_name)
 
-  # 2. Create package skeleton
+  # Check if folder already exists
+  if (dir.exists(full_path)) {
+    stop("Folder already exists: ", full_path)
+  }
+
+  # Create package skeleton
   usethis::create_package(full_path, open = FALSE)
   message("Package skeleton created at: ", full_path)
 
-  # 3. Navigate to package folder
+  # Navigate to package folder
   old_wd <- getwd()
   on.exit(setwd(old_wd), add = TRUE)
   setwd(full_path)
 
-  # 4. Set DESCRIPTION fields
+  # Set DESCRIPTION fields
   d <- desc::desc(file = "DESCRIPTION")
-  d$set("Authors@R", sprintf('person("%s", email = "%s", role = c("aut", "cre"))',
-                             author_name, author_email))
+  d$set(
+    "Authors@R",
+    sprintf(
+      'person("%s", email = "%s", role = c("aut", "cre"))',
+      author_name,
+      author_email
+    )
+  )
   d$set("License", paste0(license, " + file LICENSE"))
   d$write(file = "DESCRIPTION")
 
   # Store initial version
   initial_version <- d$get_version()
 
-  # 5. Create LICENSE file
+  # Create LICENSE file
   usethis::use_mit_license(author_name)
 
-  # 6. Initialize Git
+  # Initialize Git
   git2r::init(full_path)
+
+  # Rename branch to main if needed
+  system("git branch -M main")
+
+  # Ensure Git identity
+  system(sprintf('git config user.name "%s"', author_name))
+  system(sprintf('git config user.email "%s"', author_email))
+
+  # Initial commit
   system("git add -A")
   system(sprintf("git commit -m %s", shQuote("Initial package commit")))
-  message("Git initialized and initial commit created.")
 
-  # 7. Add GitHub remote and push
+  # Add GitHub remote and push if provided
   if (!is.null(github_repo)) {
     system(sprintf("git remote add origin %s", github_repo))
     system("git push -u origin main")
-    message("GitHub remote added and initial push complete.")
   }
 
-  # 8. Create portable release runner script with initial version
+  # --- Create release_<package>.R script ---
   runner_file <- file.path(full_path, paste0("release_", package_name, ".R"))
 
-  cat(sprintf(
-    "# This script runs af_release_package() for %s with initial version %s\n\n",
-    package_name, initial_version
-  ), file = runner_file)
+  cat(sprintf("# --- release_%s.R ---\n", package_name), file = runner_file)
+  cat(
+    sprintf(
+      "# This script runs af_release_package() for %s with initial version\n\n",
+      package_name
+    ),
+    file = runner_file,
+    append = TRUE
+  )
 
-  cat("af_packages_path <- system.file('R/af_packages.R', package = 'afcommon')\n",
-      file = runner_file, append = TRUE)
+  cat("library(afcommon)\n\n", file = runner_file, append = TRUE)
 
-  cat("if (af_packages_path == '') stop('af_packages.R not found in installed afcommon package')\n",
-      file = runner_file, append = TRUE)
+  cat(
+    sprintf(
+      "new_version <- af_release_package(\n  package_path = '.',\n  github_repo = '%s'\n)\n\n",
+      github_repo %||% ""
+    ),
+    file = runner_file,
+    append = TRUE
+  )
 
-  cat("source(af_packages_path)\n", file = runner_file, append = TRUE)
+  cat(
+    "# Remove local af_* functions to avoid conflicts\n",
+    file = runner_file,
+    append = TRUE
+  )
+  cat(
+    "to_remove <- ls(envir = .GlobalEnv, pattern = '^af_')\n",
+    file = runner_file,
+    append = TRUE
+  )
+  cat(
+    "if (length(to_remove) > 0) rm(list = to_remove, envir = .GlobalEnv)\n\n",
+    file = runner_file,
+    append = TRUE
+  )
 
-  cat(sprintf(
-    "af_release_package(package_path = '.', github_repo = '%s', initial_version = '%s')\n",
-    github_repo %||% "", initial_version
-  ), file = runner_file, append = TRUE)
+  cat(
+    sprintf(
+      "# Unload the package if already loaded\nif ('%s' %%in%% loadedNamespaces()) unloadNamespace('%s')\n\n",
+      package_name,
+      package_name
+    ),
+    file = runner_file,
+    append = TRUE
+  )
 
-  message("Portable release runner script created with initial version: ", runner_file)
+  cat(
+    sprintf(
+      "# Install and load the newly released package from GitHub\nremotes::install_github(paste0('%s@v', new_version))\nlibrary('%s', character.only = TRUE)\n\n",
+      github_repo %||% "",
+      package_name
+    ),
+    file = runner_file,
+    append = TRUE
+  )
+
+  cat(
+    sprintf(
+      "message(sprintf('Successfully released and loaded %s version %%s', new_version))\n",
+      package_name
+    ),
+    file = runner_file,
+    append = TRUE
+  )
+
+  message("Portable release runner script created: ", runner_file)
 
   invisible(full_path)
 }

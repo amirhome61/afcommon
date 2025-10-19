@@ -20,8 +20,12 @@ new_version <- af_release_package(
 unloadNamespace("afcommon")  # Ensure nothing is attached
 remotes::install_github(paste0("amirhome61/afcommon@v", new_version))
 
-# Remove old definitions from the global environment
-rm(list = c("af_create_package", "af_release_package"))
+# Automatically remove any functions in the global environment that start with "af_"
+to_remove <- ls(envir = .GlobalEnv, pattern = "^af_")
+if (length(to_remove) > 0) {
+  rm(list = to_remove, envir = .GlobalEnv)
+  message(sprintf("Removed %d local af_* function(s) from global environment.", length(to_remove)))
+}
 
 library(afcommon)
 

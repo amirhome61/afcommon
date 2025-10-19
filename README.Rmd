@@ -32,9 +32,10 @@ library(afcommon)
 
 ## Workflow Overview
 
-1. **Create a new package** using `af_create_package()`.
-2. **Add your R scripts** to the `R/` folder of the new package.
-3. **Run the release script** (`release_<package>.R`) to:
++ **Create a GitHub repository** for your new R package.
++ **Run the create script** (`create_<package>.R`).
++ **Add your R scripts** to the `R/` folder of the new package.
++ **Run the release script** (`release_<package>.R`) to:
    - Increment the version (or use initial version)
    - Update documentation via roxygen2
    - Commit changes to Git
@@ -42,4 +43,4 @@ library(afcommon)
    - Push to GitHub
    - Install the package locally
 
-![Workflow Diagram](workflow.png)
+
