@@ -131,7 +131,11 @@ af_release_package <- function(
   # ----------------------------
   # 2. Update documentation
   # ----------------------------
-  devtools::document()
+  suppressWarnings(
+    suppressMessages(
+      devtools::document()
+    )
+  )
   message("Documentation updated using roxygen2.")
 
   # ----------------------------
