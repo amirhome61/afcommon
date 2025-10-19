@@ -39,7 +39,6 @@ library(devtools)
 #' 4. Create an annotated Git tag with the release message.
 #' 5. Push commits and tag to GitHub.
 #' 6. Create a GitHub release with the provided release message.
-#' 7. Install the package from GitHub and load it.
 #'
 #' @examples
 #' \dontrun{
@@ -153,14 +152,6 @@ af_release_package <- function(package_path = ".",
       )
     }
   }
-
-  # ----------------------------
-  # 7. Install new release locally
-  # ----------------------------
-  remotes::install_github(paste0(github_repo, "@", tag_name))
-  library_name <- d$get("Package")
-  library(library_name, character.only = TRUE)
-  message(sprintf("Installed %s version %s locally.", library_name, new_version))
 
   return(new_version)
 }

@@ -49,7 +49,6 @@ Steps performed by this function:
 4. Create an annotated Git tag with the release message.
 5. Push commits and tag to GitHub.
 6. Create a GitHub release with the provided release message.
-7. Install the package from GitHub and load it.
 }
 \examples{
 \dontrun{
