@@ -1,3 +1,10 @@
+# This script automates the release process for the afcommon package.
+
+# Unload the package if it's already loaded
+if ("package:afcommon" %in% search()) {
+  detach("package:afcommon", unload = TRUE)
+}
+
 # Source the release function
 source("R/af_packages.R")
 
