@@ -1,11 +1,24 @@
-#' Comprehensive Descriptive Statistics Function
+#' Comprehensive Descriptive Statistics
 #'
-#' @param df A dataframe to analyze and provide descriptive information for
-#' @param var_list Optional list of variable names to analyze (default is all variables)
-#' @return A list of three GT tables or NULLs for numeric, binary, and categorical variables
+#' @description
+#' Generates comprehensive descriptive statistics tables for variables in a data frame.
+#' Creates separate summary tables for numeric variables (mean, SD, median, IQR, min, max),
+#' binary factor variables (level counts and percentages), and categorical variables
+#' (type, categories, mode). Returns formatted gt tables for each variable type.
+#'
+#' @param df (data.frame) A data frame to analyze and provide descriptive information for
+#' @param var_list (character vector) Optional list of variable names to analyze. Default is NULL, which analyzes all variables in the data frame
+#'
+#' @return (list) A named list with three elements: numeric, binary, and categorical, each containing a gt table object or NULL if no variables of that type exist
+#'
 #' @import dplyr
 #' @import gt
-#' @importFrom stats median sd quantile
+#' @importFrom stats median sd quantile IQR
+#'
+#' @examples
+#' results <- af_descriptive(mtcars)
+#' results <- af_descriptive(mtcars, c("mpg", "cyl", "hp"))
+#'
 #' @export
 af_descriptive <- function(df, var_list = NULL) {
   # Validate inputs
@@ -142,8 +155,25 @@ af_descriptive <- function(df, var_list = NULL) {
   ))
 }
 
-# Create data dictionary table
-
+#' Create Data Dictionary
+#'
+#' @description
+#' Generates a data dictionary for a given data frame, summarizing variable names,
+#' labels, types, and ranges or levels. The resulting information is formatted
+#' as a gt table for easy viewing.
+#'
+#' @param df (data.frame) A data frame to create a data dictionary for
+#'
+#' @return (gt table) A gt table summarizing the data dictionary information
+#'
+#' @import dplyr
+#' @import gt
+#'
+#' @examples
+#' data_dict <- af_create_data_dictionary(mtcars)
+#' data_dict
+#'
+#' @export
 af_create_data_dictionary <- function(df) {
   info <- data.frame(
     Name = character(),

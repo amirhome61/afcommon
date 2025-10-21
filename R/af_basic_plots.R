@@ -1,21 +1,71 @@
-#' Create an XY plot with extended styling options
+#' Create a histogram plot with automatic handling of numeric and categorical data
 #'
 #' @description
-#' Creates a ggplot2 XY plot with optional grouping, faceting, and styling features
+#' Creates a ggplot2 histogram for numeric data or a bar chart for categorical data,
+#' with automatic percentage labels and total population count displayed.
 #'
-#' @param data A data frame containing the variables to plot
-#' @param x_var Name of the variable for the x-axis (if NULL, row indices are used)
-#' @param y_var Name of the variable for the y-axis
-#' @param grouping_variable Name of the variable for primary grouping (default: "None")
-#' @param subgrouping_variable Name of the variable for secondary grouping (default: "None")
-#' @param use_facet Logical indicating whether to create facets (default: FALSE)
-#' @param facet_cols Number of columns for facets when use_facet=TRUE (default: 2)
-#' @param trend_line Type of trend line to add: NULL (no line), "smooth" (smooth line), or "linear" (linear regression) (default: NULL)
-#' @param show_points Logical indicating whether to show data points (default: FALSE)
-#' @param flip_axes Logical indicating whether to flip the x and y axes (default: FALSE)
-#' @param agg_func Aggregation function to use ("None", "mean", "median", "min", "max", "sum", "count")
-#' @param title Optional plot title (default: NULL)
-#' @param subtitle Optional plot subtitle (default: NULL)
+#' @param df A data frame containing the variable to plot
+#' @param y_name Character string specifying the name of the variable to plot
+#' @param nbins Numeric value specifying number of bins for numeric histograms (default: 50)
+#'
+#' @return A ggplot2 object
+#'
+#' @import ggplot2
+#' @import dplyr
+#'
+#' @examples
+#' \dontrun{
+#' # Numeric variable histogram
+#' af_plot_histogram(mtcars, "mpg")
+#'
+#' # Categorical variable bar chart
+#' af_plot_histogram(mtcars, "cyl", nbins = 30)
+#' }
+#'
+#' @export
+af_plot_histogram <- function(df, y_name, nbins = 50) {
+  total_population <- nrow(df) # Calculate total population size
+
+  if (is.numeric(df[[y_name]])) {
+    ggplot(df, aes(x = .data[[y_name]])) +
+      geom_histogram(
+        alpha = 0.5,
+        position = "identity",
+        color = "black",
+        bins = nbins
+      ) +
+      annotate(
+        "text",
+        x = Inf,
+        y = Inf,
+        label = paste("Total N =", total_population),
+        hjust = 1.1,
+        vjust = 1.5,
+        size = 4
+      ) +
+      labs(x = y_name, y = "Count")
+  } else {
+    # Calculate percentages
+    df_summary <- df %>%
+      group_by(.data[[y_name]]) %>%
+      summarise(count = n()) %>%
+      mutate(percentage = count / sum(count) * 100)
+
+    ggplot(df_summary, aes(x = .data[[y_name]], y = count)) +
+      geom_bar(stat = "identity", alpha = 0.5, position = "identity") +
+      geom_text(aes(label = paste0(round(percentage, 1), "%")), vjust = -0.5) +
+      annotate(
+        "text",
+        x = Inf,
+        y = Inf,
+        label = paste("Total N =", total_population),
+        hjust = 1.1,
+        vjust = 1.5,
+        size = 4
+      ) +
+      labs(x = y_name, y = "Count")
+  }
+} #' @param subtitle Optional plot subtitle (default: NULL)
 #' @param x_label Optional custom x-axis label (default: NULL, uses variable name)
 #' @param y_label Optional custom y-axis label (default: NULL, uses variable name)
 #' @param line_size Size of lines in the plot (default: 1)
@@ -44,6 +94,8 @@
 #'                  legend_position = "bottom",
 #'                  legend_label = "Number of Cylinders")
 #' }
+#'
+#' @export
 af_create_xy_plot <- function(
   data,
   x_var = NULL,
@@ -316,6 +368,8 @@ af_create_xy_plot <- function(
 #' @import ggplot2
 #' @import dplyr
 #' @import tidyr
+#'
+#' @export
 af_create_x_multi_y_plot <- function(
   data,
   x_var = NULL,
@@ -502,6 +556,7 @@ af_create_x_multi_y_plot <- function(
 
 #' Create Y Variable Plots with Flexible Grouping and Plot Types
 #'
+#' @description
 #' This function creates various types of plots for a single y variable with optional
 #' grouping and subgrouping. Supports histograms, bar plots, boxplots, violin plots,
 #' and density plots with automatic count labels.
@@ -537,6 +592,7 @@ af_create_x_multi_y_plot <- function(
 #' @import ggplot2
 #' @import dplyr
 #' @importFrom rlang sym
+#'
 #' @export
 af_create_y_plot <- function(
   data,
@@ -893,6 +949,8 @@ af_create_y_plot <- function(
 #'                 add_labels = TRUE,
 #'                 legend_position = "bottom")
 #' }
+#'
+#' @export
 af_create_xy_bar <- function(
   data,
   x_var,
@@ -1117,6 +1175,8 @@ af_create_xy_bar <- function(
 #'                  auto_text_color = TRUE,
 #'                  legend_position = "bottom")
 #' }
+#'
+#' @export
 af_create_heatmap <- function(
   data,
   x_var,
@@ -1328,6 +1388,9 @@ af_create_heatmap <- function(
   p
 }
 
+#' Plot Combinations Chart
+#'
+#' @description
 #' Generates a horizontal bar chart showing counts for combinations of specified variables.
 #' Allows filtering based on a percentage threshold and exclusion of specific strings
 #' in combination labels. Displays percentage on each bar and uses "Respondents" for the x-axis label.
@@ -1370,6 +1433,11 @@ af_create_heatmap <- function(
 #' # try(af_plot_combinations_chart(dummy_df, c("pe_left_center_right", "non_existent_var")))
 #' # try(af_plot_combinations_chart(dummy_df, c("pe_left_center_right"), threshold = 101))
 #' # try(af_plot_combinations_chart(dummy_df, c("pe_left_center_right"), exclude_strings = 123))
+#'
+#' @import ggplot2
+#' @import dplyr
+#'
+#' @export
 af_plot_combinations_chart <- function(
   df,
   var_names,
@@ -1548,6 +1616,32 @@ af_plot_combinations_chart <- function(
   return(p)
 }
 
+#' Create a Q-Q plot for normality assessment
+#'
+#' @description
+#' Creates a quantile-quantile (Q-Q) plot to assess whether data follows a normal distribution.
+#' The plot includes reference points, a theoretical line, and a confidence band.
+#'
+#' @param df A data frame containing the variable to plot
+#' @param var_name Character string specifying the name of the variable to assess
+#'
+#' @return A ggplot2 object
+#'
+#' @import ggplot2
+#' @importFrom qqplotr stat_qq_point stat_qq_line stat_qq_band
+#'
+#' @examples
+#' \dontrun{
+#' # Basic Q-Q plot
+#' af_plot_qq(mtcars, "mpg")
+#'
+#' # Assess normality of residuals
+#' model <- lm(mpg ~ wt, data = mtcars)
+#' residuals_df <- data.frame(residuals = residuals(model))
+#' af_plot_qq(residuals_df, "residuals")
+#' }
+#'
+#' @export
 af_plot_qq <- function(df, var_name) {
   ggplot(df, aes_string(sample = var_name)) +
     qqplotr::stat_qq_point() +
@@ -1556,6 +1650,29 @@ af_plot_qq <- function(df, var_name) {
     labs(x = "Theoretical Quantiles", y = paste(var_name, "Sample Quantiles"))
 }
 
+#' Create a histogram or bar chart with frequency counts
+#'
+#' @description
+#' Generates a histogram for numeric variables or a bar chart for categorical
+#' variables. Automatically detects variable type and adjusts visualization
+#' accordingly. Bar charts include percentage labels above bars, and all plots
+#' display total sample size in the top-right corner.
+#'
+#' @param df (data.frame) Input data frame containing the variable to plot
+#' @param y_name (character) Name of the column to visualize
+#' @param nbins (numeric) Number of bins for histogram. Default is 50
+#'
+#' @return (ggplot) A ggplot object showing either a histogram (numeric) or bar chart (categorical)
+#'
+#' @import ggplot2
+#' @import dplyr
+#' @import rlang
+#'
+#' @examples
+#' af_plot_histogram(mtcars, "mpg", nbins = 30)
+#' af_plot_histogram(mtcars, "cyl")
+#'
+#' @export
 af_plot_histogram <- function(df, y_name, nbins = 50) {
   total_population <- nrow(df) # Calculate total population size
 
@@ -1600,7 +1717,27 @@ af_plot_histogram <- function(df, y_name, nbins = 50) {
   }
 }
 
-# Distribution: Histogram overlaid with kernel density curve
+#' Plot Distribution with Histogram and Density Curve
+#'
+#' @description
+#' Creates a distribution plot for a variable in a data frame. For numeric
+#' variables, generates a histogram overlaid with a kernel density curve and
+#' displays total sample size. For non-numeric variables, creates a bar plot.
+#'
+#' @param df (data.frame) The data frame containing the variable to plot
+#' @param y_name (character) The name of the column to plot
+#' @param title (character) The plot title. Default is " "
+#' @param nbins (numeric) The number of bins for the histogram when plotting numeric variables. Default is 50
+#'
+#' @return (ggplot) A ggplot object displaying the distribution
+#'
+#' @import ggplot2
+#'
+#' @examples
+#' # Numeric variable with density overlay
+#' af_plot_distribution(mtcars, "mpg", title = "MPG Distribution")
+#'
+#' @export
 af_plot_distribution <- function(df, y_name, title = " ", nbins = 50) {
   total_population <- nrow(df)
 
@@ -1633,6 +1770,24 @@ af_plot_distribution <- function(df, y_name, title = " ", nbins = 50) {
   return(p)
 }
 
+#' Plot Density Distribution
+#'
+#' @description
+#' Creates a kernel density plot for a numeric variable in a data frame. The plot
+#' displays a smooth density curve with blue fill and includes an annotation showing
+#' the count of non-missing values in the upper right corner.
+#'
+#' @param df (data.frame) The data frame containing the variable to plot
+#' @param y_name (character) The name of the column to plot
+#'
+#' @return (ggplot) A ggplot object displaying the density distribution with frequency on the y-axis
+#'
+#' @import ggplot2
+#'
+#' @examples
+#' af_plot_density(mtcars, "mpg")
+#'
+#' @export
 af_plot_density <- function(df, y_name) {
   n_points <- sum(!is.na(df[[y_name]]))
 
@@ -1653,6 +1808,24 @@ af_plot_density <- function(df, y_name) {
   return(p)
 }
 
+#' Plot Bar Chart
+#'
+#' @description
+#' Creates a bar chart for a categorical or discrete variable in a data frame. The plot
+#' displays count frequencies with blue fill and includes an annotation showing the count
+#' of non-missing values in the upper right corner.
+#'
+#' @param df (data.frame) The data frame containing the variable to plot
+#' @param y_name (character) The name of the column to plot
+#'
+#' @return (ggplot) A ggplot object displaying the bar chart with count on the y-axis
+#'
+#' @import ggplot2
+#'
+#' @examples
+#' af_plot_barchart(mtcars, "cyl")
+#'
+#' @export
 af_plot_barchart <- function(df, y_name) {
   # Create bar charts for each variable
   n_points <- sum(!is.na(df[[y_name]]))
@@ -1674,7 +1847,28 @@ af_plot_barchart <- function(df, y_name) {
   return(p)
 }
 
-# Function to create correlation plot
+#' Plot Correlation Matrix
+#'
+#' @description
+#' Creates a correlation plot displaying pairwise correlations between numeric variables
+#' in a data frame. The plot uses circles in the lower triangle with correlation coefficients
+#' as labels, and handles missing values using pairwise complete observations.
+#'
+#' @param df (data.frame) The data frame containing the variables to correlate
+#' @param vars (character vector) The names of variables to include in the correlation plot. Default is NULL, which uses all variables in the data frame
+#' @param title (character) The plot title. Default is "Correlation Plot"
+#'
+#' @return (ggplot) A ggcorrplot object displaying the correlation matrix with circle method and lower triangle layout
+#'
+#' @import dplyr
+#' @import ggcorrplot
+#' @import viridis
+#'
+#' @examples
+#' af_plot_correlation(mtcars)
+#' af_plot_correlation(mtcars, c("mpg", "hp", "wt"))
+#'
+#' @export
 af_plot_correlation <- function(df, vars = NULL, title = "Correlation Plot") {
   if (is.null(vars)) {
     vars <- names(df)
@@ -1705,6 +1899,27 @@ af_plot_correlation <- function(df, vars = NULL, title = "Correlation Plot") {
   )
 }
 
+#' Plot Correlation Matrices by Group
+#'
+#' @description
+#' Creates separate correlation plots for each level of a grouping variable. For each
+#' group value, the function filters the data and generates a correlation matrix plot
+#' with the group identifier in the title. Returns a list of correlation plots.
+#'
+#' @param df (data.frame) The data frame containing the variables to correlate and the grouping variable
+#' @param group_var (character) The name of the grouping variable
+#' @param group_values (vector) The specific group values to create plots for. Default is NULL, which uses all unique values of the grouping variable
+#' @param vars (character vector) The names of variables to include in the correlation plots. Default is NULL, which uses all variables in the data frame
+#'
+#' @return (list) A list of ggplot objects, one correlation plot for each group value
+#'
+#' @import dplyr
+#'
+#' @examples
+#' plots <- af_plot_correlation_per_group(mtcars, "cyl")
+#' plots <- af_plot_correlation_per_group(mtcars, "cyl", c(4, 6), c("mpg", "hp", "wt"))
+#'
+#' @export
 af_plot_correlation_per_group <- function(
   df,
   group_var,
@@ -1733,6 +1948,27 @@ af_plot_correlation_per_group <- function(
   return(plot_list)
 }
 
+#' Plot Distributions by Group
+#'
+#' @description
+#' Creates separate distribution plots for a variable across different levels of a grouping
+#' variable. For each group value, the function filters the data and generates a distribution
+#' plot with the group identifier in the title. Returns a list of distribution plots.
+#'
+#' @param df (data.frame) The data frame containing the variable to plot and the grouping variable
+#' @param y_name (character) The name of the column to plot
+#' @param group_var (character) The name of the grouping variable
+#' @param group_values (vector) The specific group values to create plots for. Default is NULL, which uses all unique values of the grouping variable
+#'
+#' @return (list) A list of ggplot objects, one distribution plot for each group value
+#'
+#' @import dplyr
+#'
+#' @examples
+#' plots <- af_plot_distribution_per_group(mtcars, "mpg", "cyl")
+#' plots <- af_plot_distribution_per_group(mtcars, "mpg", "cyl", c(4, 6))
+#'
+#' @export
 af_plot_distribution_per_group <- function(
   df,
   y_name,
@@ -1759,6 +1995,7 @@ af_plot_distribution_per_group <- function(
 
 #' Combine plots in a grid with optional title, subtitle, note, and legend options
 #'
+#' @description
 #' This function arranges a list of ggplot objects in a grid layout and can
 #' optionally add a main title, subtitle, note, extract a common legend from plots,
 #' or create a custom external legend from color and line type specifications.
@@ -1802,6 +2039,11 @@ af_plot_distribution_per_group <- function(
 #'                  row_spacing = 0.1,
 #'                  col_spacing = 0.1)
 #'
+#' @import grid
+#' @import gridExtra
+#' @import ggplot2
+#'
+#' @export
 af_combine_plots <- function(
   plot_list,
   ncol = 2,
@@ -2027,13 +2269,27 @@ af_combine_plots <- function(
 
 #' Create custom legend grob
 #'
-#' Internal function to create a custom legend from color and line type specifications
+#' @description
+#' Create a custom legend from color and line type specifications
 #'
 #' @param legend_specs List of color-linetype pairs
 #' @param labels Character vector of labels
 #'
 #' @return A grob object representing the legend
 #'
+#' @import grid
+#' @examples
+#' #' legend_specs <- list(
+#'  c("red", "dashed"),
+#' c("blue", "dotted"),
+#' c("green", "solid")
+#' )
+#' labels <- c("Treatment A", "Treatment B", "Control")
+#' legend_grob <- af_create_custom_legend(legend_specs, labels)
+#' grid.newpage()
+#' grid.draw(legend_grob)
+#'
+#' @export
 af_create_custom_legend <- function(legend_specs, labels) {
   # Input validation
   if (!is.list(legend_specs) || length(legend_specs) == 0) {
@@ -2102,6 +2358,30 @@ af_create_custom_legend <- function(legend_specs, labels) {
   return(legend_grob)
 }
 
+#' Save ggplot with Custom Defaults
+#'
+#' @description
+#' Saves a ggplot object to a file with preset dimensions and resolution suitable for
+#' publication-quality figures. Optionally displays the plot before saving. Wraps the
+#' ggplot2::ggsave function with convenient default parameters.
+#'
+#' @param filename (character) The file path where the plot will be saved
+#' @param plot (ggplot) The plot object to save. Default is last_plot(), which saves the most recently created plot
+#' @param width (numeric) The width of the saved plot. Default is 180
+#' @param height (numeric) The height of the saved plot. Default is 90
+#' @param units (character) The units for width and height. Default is "mm"
+#' @param dpi (numeric) The resolution in dots per inch. Default is 600
+#' @param display (logical) Whether to display the plot before saving. Default is TRUE
+#'
+#' @return NULL (called for side effects of saving file and optionally displaying plot)
+#'
+#' @import ggplot2
+#'
+#' @examples
+#' p <- ggplot(mtcars, aes(x = mpg)) + geom_histogram()
+#' af_ggsave("myplot.png", p)
+#'
+#' @export
 af_ggsave <- function(
   filename,
   plot = last_plot(),

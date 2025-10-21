@@ -1,3 +1,14 @@
+#' Factor analysis functions
+#'
+#' @description
+#' Functions for performing factor analysis, confirmatory factor analysis (CFA),
+#' and measurement invariance testing using the lavaan package.
+#'
+#' @param msa Kaiser-Meyer-Olkin measure of sampling adequacy
+#'
+#' @return Interpretation string for the KMO value
+#'
+#' @export
 af_interpret_kmo <- function(msa) {
   # Kaiser-Meyer-Olkin (KMO) factor adequacy
   #
@@ -25,6 +36,16 @@ af_interpret_kmo <- function(msa) {
   return(interpretation)
 }
 
+#' Interpret Bartlett's Test Result
+#'
+#' @description
+#' Generates an interpretation of Bartlett's test result for factor analysis suitability.
+#'
+#' @param bartlett_result Result object from bartlett.test()
+#'
+#' @return Interpretation string based on the p-value of Bartlett's test
+#'
+#' @export
 af_interpret_bartlett <- function(bartlett_result) {
   if (bartlett_result$p.value < 0.05) {
     interpretation <- "The test is significant, indicating that the variables are sufficiently correlated for factor analysis."
@@ -34,6 +55,16 @@ af_interpret_bartlett <- function(bartlett_result) {
   return(interpretation)
 }
 
+#' Interpret Cronbach's Alpha Result
+#'
+#' @description
+#' Generates an interpretation of Cronbach's alpha result for reliability analysis.
+#'
+#' @param alpha_result Result object from psych::alpha()
+#'
+#' @return Interpretation string based on the Cronbach's alpha value
+#'
+#' @export
 af_interpret_cronbach <- function(alpha_result) {
   raw_alpha <- alpha_result$total$raw_alpha
 
@@ -58,6 +89,28 @@ af_interpret_cronbach <- function(alpha_result) {
   return(interpretation)
 }
 
+#' Perform Confirmatory Factor Analysis (CFA)
+#'
+#' @description
+#' Performs confirmatory factor analysis (CFA) using the lavaan package,
+#' calculates fit measures, reliability, and predicts latent variable scores.
+#'
+#' @param df Data frame containing the data for CFA
+#' @param var_list List of manifest variable names
+#' @param latent_var_name Name of the latent variable
+#' @param group (Optional) Name of the grouping variable for multi-group CFA
+#' @param model (Optional) Custom CFA model specification
+#' @param cfa_type (Optional) Type of CFA: "configural", "metric", "scalar", or "strict"
+#' @param group_id Identifier for the group (default: "all")
+#' @param factors_list (Optional) List of manifest variables to treat as ordinal
+#' @param clean_model (Logical) Whether to clean the model of unusable indicators
+#'
+#' @return List containing the fitted CFA model, fit measures table, predicted latent scores, and updated data frame
+#'
+#' @import lavaan
+#' @import psych
+#'
+#' @export
 af_cfa <- function(
   df,
   var_list,
@@ -196,7 +249,18 @@ af_cfa <- function(
 }
 
 
-# Sanity check function
+#' Sanity check internal function
+#' @description
+#' Checks that the ordering of predicted values from lavaan::lavPredict
+#' matches the original dataframe ordering.
+#' @param df Original dataframe
+#' @param fit_predict List of predicted values from lavaan::lavPredict
+#' @param group Grouping variable name
+#' @param latent_var_name Name of the latent variable
+#' @param var_list List of manifest variable names
+#' @param latent_scores Vector of latent scores
+#' @return List indicating if the order is correct and any errors found
+#'
 af_check_order <- function(
   df,
   fit_predict,
@@ -245,6 +309,23 @@ af_check_order <- function(
   return(list(correct = all_correct, errors = all_errors))
 }
 
+#' Perform CFA for Multiple Groups
+#'
+#' @description
+#' Performs confirmatory factor analysis (CFA) separately for multiple groups
+#' within a dataset, generating fit measures, predicted latent scores,
+#' and visualizations for each group.
+#'
+#' @param df Data frame containing the data for CFA
+#' @param group_var Name of the grouping variable
+#' @param latent_var Name of the latent variable
+#' @param cfa_vars List of manifest variable names
+#' @param model (Optional) Custom CFA model specification
+#' @return List containing updated data frame with latent scores, fit results by group,
+#' CFA results table, distribution plots, and correlation plots
+#' @import lavaan
+#' @import ggplot2
+#' @export
 af_cfa_between_group <- function(
   df,
   group_var,
@@ -315,6 +396,20 @@ af_cfa_between_group <- function(
   ))
 }
 
+#' Create SEM Plot
+#'
+#' @description
+#' Generates a structural equation model (SEM) plot using the semPlot package,
+#' with options to exclude specific nodes and customize layout and edge labels.
+#'
+#' @param fit Fitted lavaan model object
+#' @param exclude_nodes (Optional) Vector of node names to exclude from the plot
+#' @param layout Layout style for the plot (default: "tree")
+#' @param nrotation Rotation of the plot (default: 1)
+#' @param edge_labels Logical indicating whether to display edge labels (default: TRUE)
+#' @return SEM plot object
+#' @import semPlot
+#' @export
 af_create_sem_plot <- function(
   fit,
   exclude_nodes = NULL,
@@ -384,6 +479,15 @@ af_create_sem_plot <- function(
   invisible(p)
 }
 
+#' Format CFA Results Table with gt
+#'
+#' @description
+#' Formats a CFA results table using the gt package, adding source notes for interpretation of fit indices.
+#'
+#' @param cfa_tbl Data frame containing CFA results
+#' @return gt table object with formatted CFA results and source notes
+#' @import gt
+#' @export
 af_gt_cfa_results_tbl <- function(cfa_tbl) {
   gt_table <- gt(cfa_tbl) %>%
     gt::tab_source_note(
@@ -402,12 +506,23 @@ af_gt_cfa_results_tbl <- function(cfa_tbl) {
   return(gt_table)
 }
 
+#' Clean CFA Model by Removing Unusable Indicators
+#'
+#' @description
+#' Cleans a CFA model specification by removing indicators that are either
+#' not present in the data frame or contain only NA or NULL values.
+#'
+#' @param df Data frame containing the data for CFA
+#' @param model CFA model specification as a string
+#' @return List containing the cleaned model and a data frame of removed indicators with reasons
+#'
+#' @examples
+#' result <- clean_cfa_model(df, model)
+#' print(result$model)  # Print the cleaned model
+#' print(result$removed_indicators)  # See which indicators were removed and why
+#'
+#' @export
 af_clean_cfa_model <- function(df, model) {
-  # Example usage:
-  # result <- clean_cfa_model(df, model)
-  # print(result$model)  # Print the cleaned model
-  # print(result$removed_indicators)  # See which indicators were removed and why
-
   # Split model into lines
   model_lines <- strsplit(model, "\n")[[1]]
 
@@ -509,7 +624,26 @@ af_clean_cfa_model <- function(df, model) {
   )
 }
 
-af_measurement_invariance <- function(
+#' Test Measurement Invariance Across Groups
+#'
+#' @description
+#' Conducts a comprehensive measurement invariance analysis by fitting and comparing four
+#' levels of confirmatory factor analysis models: configural, metric, scalar, and strict.
+#' Generates comparison plots, calculates differences between latent predictions, and provides
+#' interpretation of the invariance results across specified groups.
+#'
+#' @param model (character or lavaan model) The CFA model specification
+#' @param df (data.frame) The data frame containing the variables for the analysis
+#' @param group (character) The name of the grouping variable for multi-group analysis
+#' @param var_list (character vector) The list of observed variables to include in the CFA
+#' @param latent_var_name (character) The name of the latent variable
+#'
+#' @return (list) A named list containing: fits (list of four CFA model results), measEqOut (semTools comparison object), result_text (interpretation text), plots (list of ggplot objects for latent comparison and difference plots), and differences (list of difference statistics and correlations between models)
+#'
+#' @import ggplot2
+#' @import semTools
+#'
+#' @exportaf_measurement_invariance <- function(
   model,
   df,
   group,
@@ -732,8 +866,24 @@ af_measurement_invariance <- function(
   return(results)
 }
 
-# ------------------------------------------------------------------------------
-
+#' Interpret Measurement Invariance Results
+#'
+#' @description
+#' Interprets the results of measurement invariance testing by evaluating nested model
+#' comparisons and fit indices against specified cutoff criteria. Generates comprehensive
+#' interpretation text assessing configural, metric, scalar, and strict invariance levels,
+#' and provides an overall conclusion about the appropriateness of group comparisons.
+#'
+#' @param measEqOut (semTools compareFit object) The output object from semTools::compareFit containing nested model comparisons and fit indices
+#' @param cutoff_cfi (numeric) The cutoff value for CFI difference to establish invariance. Default is 0.01
+#' @param cutoff_rmsea (numeric) The cutoff value for RMSEA difference to establish invariance. Default is 0.015
+#' @param cutoff_p (numeric) The cutoff p-value for chi-square difference tests. Default is 0.05
+#' @param borderline_cfi (numeric) The borderline cutoff value for CFI difference for acceptable fit. Default is 0.015
+#' @param borderline_rmsea (numeric) The borderline cutoff value for RMSEA for acceptable fit. Default is 0.06
+#'
+#' @return (character) A formatted interpretation text summarizing the measurement invariance assessment, including fit indices, chi-square test results, and conclusions for each invariance level
+#'
+#' @export
 af_interpret_measurement_invariance <- function(
   measEqOut,
   cutoff_cfi = 0.01,

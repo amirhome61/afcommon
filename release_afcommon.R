@@ -1,5 +1,26 @@
 # This script automates the release process for the afcommon package.
 
+if (!requireNamespace("desc", quietly = TRUE)) {
+  install.packages("desc")
+}
+if (!requireNamespace("remotes", quietly = TRUE)) {
+  install.packages("remotes")
+}
+if (!requireNamespace("devtools", quietly = TRUE)) {
+  install.packages("devtools")
+}
+if (!requireNamespace("usethis", quietly = TRUE)) {
+  install.packages("usethis")
+}
+if (!requireNamespace("git2r", quietly = TRUE)) {
+  install.packages("git2r")
+}
+library(desc)
+library(remotes)
+library(devtools)
+library(usethis)
+library(git2r)
+
 # Unload the package if it's already loaded
 if ("package:afcommon" %in% search()) {
   detach("package:afcommon", unload = TRUE)

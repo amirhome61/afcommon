@@ -1,19 +1,3 @@
-# --- Automated R package release function with roxygen2 documentation ---
-# Requires: desc, remotes, devtools packages
-if (!requireNamespace("desc", quietly = TRUE)) {
-  install.packages("desc")
-}
-if (!requireNamespace("remotes", quietly = TRUE)) {
-  install.packages("remotes")
-}
-if (!requireNamespace("devtools", quietly = TRUE)) {
-  install.packages("devtools")
-}
-
-library(desc)
-library(remotes)
-library(devtools)
-
 #' Automate R Package Release Workflow
 #'
 #' `af_release_package()` automates the process of releasing a new version of an R package.
@@ -65,23 +49,6 @@ af_release_package <- function(
   initial_version = NULL,
   release_message = NULL
 ) {
-  if (!requireNamespace("desc", quietly = TRUE)) {
-    install.packages("desc")
-  }
-  if (!requireNamespace("remotes", quietly = TRUE)) {
-    install.packages("remotes")
-  }
-  if (!requireNamespace("devtools", quietly = TRUE)) {
-    install.packages("devtools")
-  }
-  if (!requireNamespace("usethis", quietly = TRUE)) {
-    install.packages("usethis")
-  }
-  library(desc)
-  library(remotes)
-  library(devtools)
-  library(usethis)
-
   old_wd <- getwd()
   on.exit(setwd(old_wd), add = TRUE)
   setwd(package_path)
@@ -236,20 +203,6 @@ af_create_package <- function(
   author_email = "you@example.com",
   license = "MIT"
 ) {
-  if (!requireNamespace("usethis", quietly = TRUE)) {
-    install.packages("usethis")
-  }
-  if (!requireNamespace("desc", quietly = TRUE)) {
-    install.packages("desc")
-  }
-  if (!requireNamespace("git2r", quietly = TRUE)) {
-    install.packages("git2r")
-  }
-
-  library(usethis)
-  library(desc)
-  library(git2r)
-
   # Full path to new package
   full_path <- file.path(package_path, package_name)
 
