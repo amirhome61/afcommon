@@ -451,6 +451,20 @@ af_create_regression_notes <- function(
   return(note)
 }
 
+#' Extract Variable Order from Stargazer Output
+#'
+#' @description
+#' Extracts the ordering of coefficient names from stargazer regression table output.
+#' Captures stargazer text output, filters for variable lines (excluding statistics and
+#' notes), and parses the coefficient names in their display order. Useful for creating
+#' consistent variable ordering across different table formats.
+#'
+#' @param df (data.frame) The data frame used in the regression models (not directly used but included for consistency)
+#' @param models (model object or list) A single fitted model or list of models to pass to stargazer
+#'
+#' @return (character vector) An unnamed character vector containing coefficient names in the order they appear in stargazer output
+#'
+#' @import stargazer
 af_get_stargazer_order <- function(df, models) {
   # The function expands categorical variables into their individual levels (excluding the reference level)
   # while keeping numeric variables as-is. For categorical variables, it creates separate named entries for
@@ -476,6 +490,19 @@ af_get_stargazer_order <- function(df, models) {
   return(unname(ordered_terms))
 }
 
+#' Create Display Names for Regression Coefficients
+#'
+#' @description
+#' Transforms technical regression coefficient names into human-readable display labels
+#' for tables and plots. Maps variable names to display names, formats categorical variable
+#' levels in brackets, converts interaction terms using multiplication symbols, and renames
+#' the intercept. Preserves the ordering from stargazer output.
+#'
+#' @param df (data.frame) The data frame used in the regression models
+#' @param models (model object or list) A single fitted model or list of models
+#' @param display_names (named character vector) Mapping of variable names to display labels
+#'
+#' @return (character vector) A character vector of formatted display names in the order of coefficients, with categorical levels in brackets and interactions formatted with multiplication symbols
 af_cov_names <- function(df, models, display_names) {
   # Get ordered terms from stargazer
   ordered_terms <- af_get_stargazer_order(df, models)

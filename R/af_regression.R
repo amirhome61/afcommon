@@ -1,3 +1,19 @@
+#' Plot Standardized Regression Coefficients
+#'
+#' @description
+#' Creates a visualization of standardized regression coefficients from a fitted model.
+#' Uses sjPlot::plot_model to generate a forest plot style display with confidence intervals,
+#' p-values, and sorted estimates. Supports custom variable labels and color palettes.
+#'
+#' @param model (model object) A fitted regression model object
+#' @param covs (named vector) Optional named vector mapping variable names to display labels. Default is NULL
+#' @param palette (character) Color palette specification, either "Color" or "bw". Default is "Color"
+#'
+#' @return (ggplot) A ggplot object displaying standardized coefficients with confidence intervals and significance indicators
+#'
+#' @import sjPlot
+#'
+#' @export
 af_plot_coef <- function(model, covs = NULL, palette = "Color") {
   colr = ifelse(palette == "Color", "Set1", "bw")
   p <- plot_model(
@@ -24,6 +40,22 @@ af_plot_coef <- function(model, covs = NULL, palette = "Color") {
   return(p)
 }
 
+#' Plot Coefficients from Multiple Models
+#'
+#' @description
+#' Creates a comparative visualization of standardized regression coefficients across multiple
+#' fitted models. Uses sjPlot::plot_models to generate a forest plot with all models overlaid,
+#' allowing for direct comparison of coefficient estimates. Includes legend for model identification.
+#'
+#' @param models (list) A list of fitted regression model objects to compare
+#' @param covs (named vector) Optional named vector mapping variable names to display labels. Default is NULL
+#' @param palette (character) Color palette specification for distinguishing models. Default is "Pastel1"
+#'
+#' @return (ggplot) A ggplot object displaying standardized coefficients from all models with legend
+#'
+#' @import sjPlot
+#'
+#' @export
 af_multi_plot_coef <- function(models, covs = NULL, palette = "Pastel1") {
   p <- sjPlot::plot_models(
     models,
@@ -43,6 +75,25 @@ af_multi_plot_coef <- function(models, covs = NULL, palette = "Pastel1") {
   return(p)
 }
 
+#' Plot Interaction Effects
+#'
+#' @description
+#' Creates a visualization of interaction effects from a fitted regression model. Uses
+#' sjPlot::plot_model to generate an interaction plot showing how the relationship between
+#' two variables depends on different levels of a third variable. Displays separate lines
+#' or panels for interaction effects.
+#'
+#' @param model (model object) A fitted regression model object containing interaction terms
+#' @param dep_label (character) Label for the dependent variable to display in legend
+#' @param x_label (character) Label for the x-axis variable
+#' @param y_label (character) Label for the y-axis variable
+#' @param title (character) Plot title. Default is ""
+#'
+#' @return (ggplot) A ggplot object displaying the interaction effects with legend at bottom
+#'
+#' @import sjPlot
+#'
+#' @export
 af_plot_interaction <- function(
   model,
   dep_label,
@@ -62,6 +113,35 @@ af_plot_interaction <- function(
 
 # The af_build_formula function is a versatile R tool designed to construct complex regression formulas by accepting various parameter lists that specify different components of the model. At its core, it requires a response variable (or multiple response variables) and can optionally include predictor variables, while offering extensive customization through additional parameters. The function supports a wide range of statistical modeling approaches including linear models, generalized linear models, mixed-effects models, and generalized additive models. It can handle multiple response variables, polynomial terms, variable transformations, two-way interactions, nested terms, random effects, and offset variables. Through its flexible parameter structure, users can create formulas for simple linear regression up to complex hierarchical models with crossed random effects and smooth terms. The function performs input validation, builds the formula component by component, and returns a valid R formula object that can be directly used in various modeling functions such as lm(), glm(), lmer(), or gam(). For convenience, it automatically handles special cases such as multiple response variables using cbind(), polynomial specifications using poly(), smooth terms using s(), and random effects specifications using the appropriate syntax for mixed models.
 
+#' Build Complex Regression Formulas
+#'
+#' @description
+#' Constructs complex regression formulas for various statistical models including linear,
+#' generalized linear, mixed-effects, and generalized additive models. Supports multiple
+#' response variables, polynomial terms, transformations, interactions, random effects, smooth
+#' terms, and nested structures. Returns a formula object or string ready for model fitting.
+#'
+#' @param as_string (logical) Whether to return formula as string instead of formula object. Default is FALSE
+#' @param response (character or character vector) Response variable name(s)
+#' @param predictors (character vector) Main predictor variable names. Default is NULL
+#' @param random (list) Random effects specifications for mixed models. Default is NULL
+#' @param nested (list) Nested term specifications. Default is NULL
+#' @param smooth (list) Smooth term specifications for GAMs. Default is NULL
+#' @param offset (character or character vector) Offset variable name(s). Default is NULL
+#' @param poly (named list) Polynomial specifications with variable names as keys and degrees as values. Default is NULL
+#' @param resp_transform (character) Transformation function for response variable. Default is NULL
+#' @param var_transform (named list) Predictor transformation specifications. Default is NULL
+#' @param interactions (list) Interaction specifications with type information. Default is NULL
+#' @param cross (list) Full factorial crossing specifications. Default is NULL
+#' @param interaction_type (character) Type of interaction operator, either ":" or "*". Default is ":"
+#' @param weights (character) Weight variable name. Default is NULL
+#' @param intercept (logical) Whether to include intercept. Default is TRUE
+#' @param grouping (character vector) Grouping variables for mixed models. Default is NULL
+#' @param constraints (list) Constraint specifications. Default is NULL
+#'
+#' @return (formula or list) Either a formula object, a formula string, or a list containing formula and weights depending on parameters
+#'
+#' @export
 af_build_formula <- function(
   # Core variables
   as_string = FALSE, # Logical: return formula as string instead of formula object
@@ -252,7 +332,27 @@ af_build_formula <- function(
   return(result)
 }
 
-
+#' Create Model Summary Table
+#'
+#' @description
+#' Generates a formatted summary table for one or multiple regression models using the
+#' modelsummary package. Supports coefficient exponentiation, custom coefficient mapping,
+#' and goodness-of-fit statistics selection. Outputs a gt table object with optional file
+#' export and customizable formatting.
+#'
+#' @param models (model object or list) A single fitted model or list of models to summarize
+#' @param tag (character) Tag identifier for the table title. Default is "reg-out"
+#' @param coef_map (named vector) Optional mapping of coefficient names to display labels. Default is NULL
+#' @param coef_exp (logical) Whether to exponentiate all coefficients. Default is FALSE
+#' @param exp_ctrl (logical vector) Vector indicating which models should have exponentiated coefficients. Default is NULL
+#' @param output_file (character) Optional file path to save the table. Default is NULL
+#' @param gof_map (character vector) Vector of goodness-of-fit statistics to include. Default is c("nobs", "r.squared", "adj.r.squared")
+#'
+#' @return (gt) A formatted gt table object containing model summaries with coefficients, standard errors, and fit statistics
+#'
+#' @import modelsummary
+#'
+#' @export
 af_modelsummary <- function(
   models,
   tag = "reg-out",
@@ -320,8 +420,28 @@ af_modelsummary <- function(
   return(gt_ms_table)
 }
 
-# The create_regression_notes function generates formatted notes for regression tables by combining information about statistical significance levels, reference categories for categorical variables, sample sizes, and model specifications. It accepts a dataframe and one or multiple regression models, along with optional display names for variables. The function automatically detects categorical variables and their reference levels, handles both single and multiple model cases, and can indicate the use of robust standard errors and exponentiated coefficients. It produces a professionally formatted note suitable for academic papers or technical reports, with proper punctuation and grammar that adapts based on the number of models and specified parameters. The function supports customization through parameters such as significance thresholds, display names for variables, and model-specific settings for exponentiated coefficients.
-
+#' Create Regression Table Notes
+#'
+#' @description
+#' Generates comprehensive formatted notes for regression tables including significance levels,
+#' reference categories for categorical variables, sample sizes, and standard error specifications.
+#' Handles both single and multiple models, automatically detects categorical variables, and
+#' creates professionally formatted text suitable for publication.
+#'
+#' @param df (data.frame) The data frame used in the regression analysis
+#' @param models (model object or list) A single fitted model or list of models
+#' @param display_names (named vector) Optional mapping of variable names to display labels. Default is NULL
+#' @param is_robust (logical or logical vector) Whether robust standard errors were used. Default is FALSE
+#' @param is_bootstrap (logical or logical vector) Whether bootstrapped standard errors were used. Default is FALSE
+#' @param bootstrap_iterations (numeric) Number of bootstrap iterations if applicable. Default is 1000
+#' @param is_exp (logical or logical vector) Whether coefficients are exponentiated. Default is FALSE
+#' @param show_significance (logical) Whether to include significance level notation. Default is FALSE
+#' @param show_n (logical) Whether to include sample size information. Default is FALSE
+#' @param significance_levels (numeric vector) Thresholds for significance stars. Default is c(0.05, 0.01, 0.001)
+#'
+#' @return (character) A formatted note string containing all relevant table information with proper punctuation
+#'
+#' @export
 af_create_regression_notes <- function(
   df,
   models,
@@ -513,8 +633,22 @@ af_create_regression_notes <- function(
   return(note)
 }
 
-# The function af_vif calculates Variance Inflation Factors (VIF) for regression models to assess multicollinearity between predictor variables. It returns both a summary text indicating whether multicollinearity is a concern (using a threshold of VIF > 10) and a formatted table showing VIF values for each predictor variable.
-
+#' Calculate VIF for Multicollinearity Assessment
+#'
+#' @description
+#' Calculates Variance Inflation Factors (VIF) using the performance package to assess
+#' multicollinearity between predictor variables. Returns both an interpretation text
+#' indicating whether multicollinearity is a concern (threshold VIF > 10) and a formatted
+#' gt table displaying VIF values for each predictor.
+#'
+#' @param model (model object) A fitted regression model object
+#'
+#' @return (list) A named list with two elements: result_line (character string with interpretation) and gt_tbl (formatted gt table of VIF values)
+#'
+#' @import performance
+#' @import gt
+#'
+#' @export
 af_vif_test <- function(model) {
   # Calculate VIF values
   vif_results <- performance::multicollinearity(model)
@@ -545,7 +679,21 @@ af_vif_test <- function(model) {
   ))
 }
 
-
+#' Test for Heteroscedasticity
+#'
+#' @description
+#' Performs the Breusch-Pagan test for heteroscedasticity (non-constant variance) using
+#' the performance package. Tests the homoscedasticity assumption of regression models and
+#' returns an interpretation of whether heteroscedasticity is a concern based on p-value
+#' threshold of 0.05.
+#'
+#' @param model (model object) A fitted regression model object
+#'
+#' @return (list) A named list with two elements: result_line (character string with test interpretation) and pval (numeric p-value from the test)
+#'
+#' @import performance
+#'
+#' @export
 af_hetero_test <- function(model) {
   het_test <- performance::check_heteroscedasticity(model)
   pval <- as.numeric(het_test)
@@ -570,6 +718,20 @@ af_hetero_test <- function(model) {
   ))
 }
 
+#' Expand Categorical Variables in Variable List
+#'
+#' @description
+#' Expands categorical variables into their individual levels (excluding reference level)
+#' while keeping numeric variables as-is. For categorical variables, creates separate named
+#' entries for each non-reference level using the original variable name as the key. Used
+#' for preparing variable lists for regression interpretation functions.
+#'
+#' @param df (data.frame) The data frame containing the variables
+#' @param x_list (character vector) List of variable names to expand
+#'
+#' @return (named character vector) An expanded vector with categorical levels and numeric variables, where names indicate the original variable and values indicate the level (empty string for numeric)
+#'
+#' @export
 af_expand_x_list <- function(df, x_list) {
   # The function expands categorical variables into their individual levels (excluding the reference level)
   # while keeping numeric variables as-is. For categorical variables, it creates separate named entries for
@@ -588,6 +750,21 @@ af_expand_x_list <- function(df, x_list) {
   return(result)
 }
 
+#' Prepare Regression Formula with Validation
+#'
+#' @description
+#' Validates and prepares a regression formula by checking variable existence in the data
+#' frame and identifying single-valued categorical variables. Removes problematic variables
+#' and generates diagnostic notes. Returns a valid formula ready for model fitting along
+#' with informative messages about any issues encountered.
+#'
+#' @param df (data.frame) The data frame containing the variables
+#' @param dependent_var (character) Name of the dependent variable
+#' @param independent_vars (character vector) Names of the independent variables
+#'
+#' @return (list) A named list with two elements: formula (a formula object or NULL if invalid) and notes (character vector of diagnostic messages)
+#'
+#' @export
 af_prepare_regression <- function(df, dependent_var, independent_vars) {
   notes <- character()
   valid_vars <- c()
