@@ -1,30 +1,12 @@
 # This script automates the release process for the afcommon package.
 
-if (!requireNamespace("desc", quietly = TRUE)) {
-  install.packages("desc")
+# Install librarian if not already installed
+if (!("librarian" %in% rownames(installed.packages()))) {
+  install.packages("librarian")
 }
-if (!requireNamespace("remotes", quietly = TRUE)) {
-  install.packages("remotes")
-}
-if (!requireNamespace("devtools", quietly = TRUE)) {
-  install.packages("devtools")
-}
-if (!requireNamespace("usethis", quietly = TRUE)) {
-  install.packages("usethis")
-}
-if (!requireNamespace("git2r", quietly = TRUE)) {
-  install.packages("git2r")
-}
-library(desc)
-library(remotes)
-library(devtools)
-library(usethis)
-library(git2r)
 
-# Unload the package if it's already loaded
-if ("package:afcommon" %in% search()) {
-  detach("package:afcommon", unload = TRUE)
-}
+librarian::shelf(desc, remotes, devtools, usethis, git2r)
+librarian::unshelf(afcommon)
 
 # Source the release function
 source("R/af_packages.R")
@@ -33,8 +15,8 @@ source("R/af_packages.R")
 new_version <- af_release_package(
   package_path = ".",
   github_repo = "amirhome61/afcommon",
-  version_bump = "minor", # change to "patch" or "major" as needed
-  release_message = "For testing before major release"
+  version_bump = "minor", # change to "patch", "minor", or "major" as needed
+  release_message = "Testing before major release"
 )
 
 # Automatically remove any functions in the global environment that start with "af_"
