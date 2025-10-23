@@ -65,7 +65,9 @@ af_plot_histogram <- function(df, y_name, nbins = 50) {
       ) +
       labs(x = y_name, y = "Count")
   }
-} #' @param subtitle Optional plot subtitle (default: NULL)
+}
+
+#' @param subtitle Optional plot subtitle (default: NULL)
 #' @param x_label Optional custom x-axis label (default: NULL, uses variable name)
 #' @param y_label Optional custom y-axis label (default: NULL, uses variable name)
 #' @param line_size Size of lines in the plot (default: 1)
@@ -336,40 +338,48 @@ af_create_xy_plot <- function(
   p
 }
 
-#' Create a multi-line plot with multiple y variables against a single x variable
+#' Create Customizable XY Line Plot
 #'
-#' @description
-#' Creates a ggplot2 line plot with multiple y variables plotted against a single x variable,
-#' with options for faceting, smoothing, and styling.
+#' Creates a line plot with optional grouping, faceting, trend lines, and aggregation.
+#' If no x variable is provided, an index (1:n) is used automatically.
 #'
 #' @param data A data frame containing the variables to plot
-#' @param x_var Name of the variable for the x-axis (if NULL, row indices are used)
-#' @param y_var_names Character vector of column names for y variables to plot
-#' @param y_var_labels Optional character vector of custom labels for y variables.
-#'   Must have the same length as y_var_names if provided (default: NULL, uses variable names)
-#' @param use_facet Logical indicating whether to create facets for each y variable (default: FALSE)
-#' @param facet_cols Number of columns for facets when use_facet=TRUE (default: 2)
-#' @param smooth Logical indicating whether to use smooth lines instead of straight lines (default: FALSE)
-#' @param show_points Logical indicating whether to show data points (default: FALSE)
-#' @param flip_axes Logical indicating whether to flip the x and y axes (default: FALSE)
-#' @param agg_func Aggregation function to use ("None", "mean", "median", "min", "max", "sum", "count")
-#' @param title Optional plot title (default: NULL)
-#' @param subtitle Optional plot subtitle (default: NULL)
-#' @param x_label Optional custom x-axis label (default: NULL, uses variable name)
-#' @param y_label Optional custom y-axis label (default: NULL, uses "Value")
-#' @param legend_title Optional custom legend title (default: "Variables")
-#' @param line_size Size of lines in the plot (default: 1)
-#' @param point_size Size of points in the plot (default: 3)
-#' @param legend_position Position of the legend ("right", "bottom", "left", "top", or "none")
-#' @param viridis_option Viridis color palette option ("viridis", "magma", "inferno", "plasma", "cividis") (default: "viridis")
+#' @param x_var Character string specifying the x-axis variable name. If NULL, an index will be created. Default is NULL
+#' @param y_var Character string specifying the y-axis variable name (required)
+#' @param grouping_variable Character string specifying the primary grouping variable name. Default is "None"
+#' @param subgrouping_variable Character string specifying the secondary grouping variable name. Default is "None"
+#' @param use_facet Logical indicating whether to create faceted plots. Default is FALSE
+#' @param facet_cols Integer specifying the number of columns for faceted plots. Default is 2
+#' @param trend_line Character string specifying trend line type. Options: NULL (no trend, shows lines), "smooth" (loess/linear adaptive), or "linear". Default is NULL
+#' @param show_points Logical indicating whether to display data points. Default is FALSE
+#' @param flip_axes Logical indicating whether to flip x and y axes. Default is FALSE
+#' @param agg_func Character string specifying aggregation function. Options: "None", "mean", "median", "min", "max", "sum", "count". Default is "None"
+#' @param title Character string for plot title. Default is NULL
+#' @param subtitle Character string for plot subtitle. Default is NULL
+#' @param x_label Character string for x-axis label. If NULL, uses variable name or "Index". Default is NULL
+#' @param y_label Character string for y-axis label. If NULL, uses variable name. Default is NULL
+#' @param line_size Numeric value for line width. Default is 1
+#' @param point_size Numeric value for point size. Default is 3
+#' @param legend_position Character string specifying legend position. Options: "right", "bottom", "left", "top", "none". Default is "right"
+#' @param legend_label Character string for custom legend title. If NULL, uses grouping variable name(s). Default is NULL
 #'
-#' @return A ggplot2 object
-#'
-#' @import ggplot2
-#' @import dplyr
-#' @import tidyr
+#' @return A ggplot object
 #'
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' # Simple line plot
+#' af_create_xy_plot(mtcars, x_var = "wt", y_var = "mpg")
+#'
+#' # Grouped plot with smooth trend line
+#' af_create_xy_plot(mtcars, x_var = "wt", y_var = "mpg",
+#'                   grouping_variable = "cyl", trend_line = "smooth")
+#'
+#' # Faceted plot with points
+#' af_create_xy_plot(mtcars, x_var = "wt", y_var = "mpg",
+#'                   grouping_variable = "cyl", use_facet = TRUE, show_points = TRUE)
+#' }
 af_create_x_multi_y_plot <- function(
   data,
   x_var = NULL,
