@@ -34,7 +34,7 @@ new_version <- af_release_package(
   package_path = ".",
   github_repo = "amirhome61/afcommon",
   version_bump = "minor", # change to "patch" or "major" as needed
-  release_message = "New package release and create functions"
+  release_message = "For testing before major release"
 )
 
 # Automatically remove any functions in the global environment that start with "af_"
