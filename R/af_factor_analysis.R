@@ -643,7 +643,8 @@ af_clean_cfa_model <- function(df, model) {
 #' @import ggplot2
 #' @import semTools
 #'
-#' @exportaf_measurement_invariance <- function(
+#' @export
+af_measurement_invariance <- function(
   model,
   df,
   group,
