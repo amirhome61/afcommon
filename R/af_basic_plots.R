@@ -67,37 +67,48 @@ af_plot_histogram <- function(df, y_name, nbins = 50) {
   }
 }
 
-#' @param subtitle Optional plot subtitle (default: NULL)
-#' @param x_label Optional custom x-axis label (default: NULL, uses variable name)
-#' @param y_label Optional custom y-axis label (default: NULL, uses variable name)
-#' @param line_size Size of lines in the plot (default: 1)
-#' @param point_size Size of points in the plot (default: 3)
-#' @param legend_position Position of the legend ("right", "bottom", "left", "top", or "none")
-#' @param legend_label Custom legend label (default: NULL, uses variable name)
+#' Create Customizable XY Line Plot
 #'
-#' @return A ggplot2 object
+#' Creates a line plot with optional grouping, faceting, trend lines, and aggregation.
+#' If no x variable is provided, an index (1:n) is used automatically.
 #'
-#' @import ggplot2
-#' @import dplyr
+#' @param data A data frame containing the variables to plot
+#' @param x_var Character string specifying the x-axis variable name. If NULL, an index will be created. Default is NULL
+#' @param y_var Character string specifying the y-axis variable name (required)
+#' @param grouping_variable Character string specifying the primary grouping variable name. Default is "None"
+#' @param subgrouping_variable Character string specifying the secondary grouping variable name. Default is "None"
+#' @param use_facet Logical indicating whether to create faceted plots. Default is FALSE
+#' @param facet_cols Integer specifying the number of columns for faceted plots. Default is 2
+#' @param trend_line Character string specifying trend line type. Options: NULL (no trend, shows lines), "smooth" (loess/linear adaptive), or "linear". Default is NULL
+#' @param show_points Logical indicating whether to display data points. Default is FALSE
+#' @param flip_axes Logical indicating whether to flip x and y axes. Default is FALSE
+#' @param agg_func Character string specifying aggregation function. Options: "None", "mean", "median", "min", "max", "sum", "count". Default is "None"
+#' @param title Character string for plot title. Default is NULL
+#' @param subtitle Character string for plot subtitle. Default is NULL
+#' @param x_label Character string for x-axis label. If NULL, uses variable name or "Index". Default is NULL
+#' @param y_label Character string for y-axis label. If NULL, uses variable name. Default is NULL
+#' @param line_size Numeric value for line width. Default is 1
+#' @param point_size Numeric value for point size. Default is 3
+#' @param legend_position Character string specifying legend position. Options: "right", "bottom", "left", "top", "none". Default is "right"
+#' @param legend_label Character string for custom legend title. If NULL, uses grouping variable name(s). Default is NULL
+#'
+#' @return A ggplot object
+#'
+#' @export
 #'
 #' @examples
 #' \dontrun{
-#' # Basic plot
-#' af_create_xy_plot(mtcars, "wt", "mpg")
+#' # Simple line plot
+#' af_create_xy_plot(mtcars, x_var = "wt", y_var = "mpg")
 #'
-#' # With grouping and custom styling
-#' af_create_xy_plot(mtcars, "wt", "mpg",
-#'                  grouping_variable = "cyl",
-#'                  show_points = TRUE,
-#'                  trend_line = "linear",
-#'                  title = "Car Weight vs MPG",
-#'                  x_label = "Weight (1000 lbs)",
-#'                  y_label = "Miles Per Gallon",
-#'                  legend_position = "bottom",
-#'                  legend_label = "Number of Cylinders")
+#' # Grouped plot with smooth trend line
+#' af_create_xy_plot(mtcars, x_var = "wt", y_var = "mpg",
+#'                   grouping_variable = "cyl", trend_line = "smooth")
+#'
+#' # Faceted plot with points
+#' af_create_xy_plot(mtcars, x_var = "wt", y_var = "mpg",
+#'                   grouping_variable = "cyl", use_facet = TRUE, show_points = TRUE)
 #' }
-#'
-#' @export
 af_create_xy_plot <- function(
   data,
   x_var = NULL,
