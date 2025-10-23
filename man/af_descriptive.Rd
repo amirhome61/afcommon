@@ -2,18 +2,26 @@
 % Please edit documentation in R/af_descriptive.R
 \name{af_descriptive}
 \alias{af_descriptive}
-\title{Comprehensive Descriptive Statistics Function}
+\title{Comprehensive Descriptive Statistics}
 \usage{
 af_descriptive(df, var_list = NULL)
 }
 \arguments{
-\item{df}{A dataframe to analyze}
+\item{df}{(data.frame) A data frame to analyze and provide descriptive information for}
 
-\item{var_list}{Optional list of variable names to analyze (default is all variables)}
+\item{var_list}{(character vector) Optional list of variable names to analyze. Default is NULL, which analyzes all variables in the data frame}
 }
 \value{
-A list of three GT tables or NULLs for numeric, binary, and categorical variables
+(list) A named list with three elements: numeric, binary, and categorical, each containing a gt table object or NULL if no variables of that type exist
 }
 \description{
-Comprehensive Descriptive Statistics Function
+Generates comprehensive descriptive statistics tables for variables in a data frame.
+Creates separate summary tables for numeric variables (mean, SD, median, IQR, min, max),
+binary factor variables (level counts and percentages), and categorical variables
+(type, categories, mode). Returns formatted gt tables for each variable type.
+}
+\examples{
+results <- af_descriptive(mtcars)
+results <- af_descriptive(mtcars, c("mpg", "cyl", "hp"))
+
 }
