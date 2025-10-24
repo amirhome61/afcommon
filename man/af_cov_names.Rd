@@ -22,3 +22,15 @@ for tables and plots. Maps variable names to display names, formats categorical 
 levels in brackets, converts interaction terms using multiplication symbols, and renames
 the intercept. Preserves the ordering from stargazer output.
 }
+\examples{
+\dontrun{
+# Example usage
+model <- lm(mpg ~ factor(cyl) + wt + factor(gear):wt, data = mtcars)
+display_names <- c(
+ "factor(cyl)" = "Cylinders",
+ "wt" = "Weight",
+ "factor(gear)" = "Gears"
+)
+af_cov_names(mtcars, model, display_names)
+}
+}

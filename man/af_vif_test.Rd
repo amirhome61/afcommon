@@ -2,24 +2,20 @@
 % Please edit documentation in R/af_regression.R
 \name{af_vif_test}
 \alias{af_vif_test}
-\title{Calculate VIF for Multicollinearity Assessment}
+\title{Variance Inflation Factor Test with GT Table Output}
 \usage{
-af_vif_test(model, interactions = TRUE, threshold = NULL)
-
-af_vif_test(model, interactions = TRUE, threshold = NULL)
+af_vif_test(model, interactions = FALSE, threshold = NULL)
 }
 \arguments{
 \item{model}{A fitted regression model (lm, glm, etc.)}
 
 \item{interactions}{Logical. If TRUE, uses type = 'predictor' for models with interactions.
-If FALSE, uses standard VIF calculation. Default is TRUE.}
+If FALSE, uses standard VIF calculation. Default is FALSE.}
 
 \item{threshold}{Numeric. The threshold value for determining problematic multicollinearity.
 Default is 2.0 for adjusted GVIF when interactions = TRUE, 5.0 otherwise.}
 }
 \value{
-(list) A named list with two elements: result_line (character string with interpretation) and gt_tbl (formatted gt table of VIF values)
-
 A list containing:
   \item{table}{A gt table with VIF results}
   \item{interpretation}{A character string with interpretation of results}
@@ -27,11 +23,6 @@ A list containing:
   \item{problematic_predictors}{Vector of predictor names exceeding threshold}
 }
 \description{
-Calculates Variance Inflation Factors (VIF) using the performance package to assess
-multicollinearity between predictor variables. Returns both an interpretation text
-indicating whether multicollinearity is a concern (threshold VIF > 10) and a formatted
-gt table displaying VIF values for each predictor.
-
 This function performs a VIF test on a regression model and returns both
 a formatted GT table and a text interpretation of the results.
 }
