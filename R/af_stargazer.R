@@ -503,6 +503,21 @@ af_get_stargazer_order <- function(df, models) {
 #' @param display_names (named character vector) Mapping of variable names to display labels
 #'
 #' @return (character vector) A character vector of formatted display names in the order of coefficients, with categorical levels in brackets and interactions formatted with multiplication symbols
+#'
+#' @import stargazer
+#'
+#' @examples
+#' \dontrun{
+#' # Example usage
+#' model <- lm(mpg ~ factor(cyl) + wt + factor(gear):wt, data = mtcars)
+#' display_names <- c(
+#'  "factor(cyl)" = "Cylinders",
+#'  "wt" = "Weight",
+#'  "factor(gear)" = "Gears"
+#' )
+#' af_cov_names(mtcars, model, display_names)
+#' }
+#' @export
 af_cov_names <- function(df, models, display_names) {
   # Get ordered terms from stargazer
   ordered_terms <- af_get_stargazer_order(df, models)

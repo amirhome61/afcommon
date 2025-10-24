@@ -633,52 +633,6 @@ af_create_regression_notes <- function(
   return(note)
 }
 
-#' Calculate VIF for Multicollinearity Assessment
-#'
-#' @description
-#' Calculates Variance Inflation Factors (VIF) using the performance package to assess
-#' multicollinearity between predictor variables. Returns both an interpretation text
-#' indicating whether multicollinearity is a concern (threshold VIF > 10) and a formatted
-#' gt table displaying VIF values for each predictor.
-#'
-#' @param model (model object) A fitted regression model object
-#'
-#' @return (list) A named list with two elements: result_line (character string with interpretation) and gt_tbl (formatted gt table of VIF values)
-#'
-#' @import performance
-#' @import gt
-#'
-#' @export
-af_vif_test <- function(model) {
-  # Calculate VIF values
-  vif_results <- performance::multicollinearity(model)
-  vif_values <- vif_results$VIF
-
-  # Create result message
-  if (any(vif_values > 10)) {
-    result_line <- "We use VIF to test for multicolinearity. The result indicates VIF values > 10 detected. \n Multicollinearity is high.\n"
-  } else {
-    result_line <- "We use VIF to test for multicolinearity. The result indicates that all VIF values <= 10. \n Multicollinearity is not a concern.\n"
-  }
-
-  # Return both results as a list
-
-  gt_tbl = vif_results %>%
-    gt() %>%
-    fmt_number(
-      columns = where(is.numeric),
-      decimals = 1
-    ) %>%
-    tab_header(
-      title = "VIF Table"
-    )
-
-  return(list(
-    result_line = result_line,
-    gt_tbl = gt_tbl
-  ))
-}
-
 #' Test for Heteroscedasticity
 #'
 #' @description
@@ -828,7 +782,7 @@ af_prepare_regression <- function(df, dependent_var, independent_vars) {
 #'
 #' @param model A fitted regression model (lm, glm, etc.)
 #' @param interactions Logical. If TRUE, uses type = 'predictor' for models with interactions.
-#'                    If FALSE, uses standard VIF calculation. Default is TRUE.
+#'                    If FALSE, uses standard VIF calculation. Default is FALSE.
 #' @param threshold Numeric. The threshold value for determining problematic multicollinearity.
 #'                 Default is 2.0 for adjusted GVIF when interactions = TRUE, 5.0 otherwise.
 #'
@@ -853,7 +807,7 @@ af_prepare_regression <- function(df, dependent_var, independent_vars) {
 #' @import gt
 #' @import dplyr
 #' @export
-af_vif_test <- function(model, interactions = TRUE, threshold = NULL) {
+af_vif_test <- function(model, interactions = FALSE, threshold = NULL) {
   # Input validation
   if (!inherits(model, c("lm", "glm", "mlm"))) {
     stop("Model must be a fitted regression model (lm, glm, etc.)")
@@ -872,48 +826,40 @@ af_vif_test <- function(model, interactions = TRUE, threshold = NULL) {
     stop("threshold must be a positive numeric value")
   }
 
-  # Load required libraries
-  if (!requireNamespace("car", quietly = TRUE)) {
-    stop("Package 'car' is required but not installed")
-  }
-  if (!requireNamespace("gt", quietly = TRUE)) {
-    stop("Package 'gt' is required but not installed")
-  }
-
   # Calculate VIF
-  tryCatch(
-    {
-      if (interactions) {
-        vif_results <- car::vif(model, type = 'predictor')
-        vif_column <- "GVIF^(1/(2*Df))"
-        vif_label <- "Adjusted GVIF"
-        table_title <- "Multicollinearity Assessment (with Interactions)"
-      } else {
-        vif_results <- car::vif(model)
-        # Handle case where vif returns a vector vs matrix
-        if (is.vector(vif_results)) {
-          vif_results <- data.frame(
-            VIF = vif_results,
-            row.names = names(vif_results)
-          )
-          vif_column <- "VIF"
-        } else {
-          vif_column <- "GVIF^(1/(2*Df))"
-        }
-        vif_label <- "VIF"
-        table_title <- "Multicollinearity Assessment"
-      }
-
-      # Convert to data frame
-      vif_df <- data.frame(
-        Predictor = rownames(vif_results),
-        VIF_Value = vif_results[, vif_column],
-        stringsAsFactors = FALSE
+  if (interactions) {
+    vif_results <- car::vif(model, type = "predictor")
+    vif_column <- "GVIF^(1/(2*Df))"
+    vif_label <- "Adjusted GVIF"
+    table_title <- "Multicollinearity Assessment (with Interactions)"
+  } else {
+    vif_results <- car::vif(model)
+    # Handle case where vif returns a vector vs matrix
+    if (is.vector(vif_results)) {
+      vif_results <- data.frame(
+        VIF = vif_results,
+        row.names = names(vif_results)
       )
-    },
-    error = function(e) {
-      stop(paste("Error calculating VIF:", e$message))
+      vif_column <- "VIF"
+    } else {
+      # Check which column exists in the data frame
+      if ("GVIF^(1/(2*Df))" %in% colnames(vif_results)) {
+        vif_column <- "GVIF^(1/(2*Df))"
+      } else if ("VIF" %in% colnames(vif_results)) {
+        vif_column <- "VIF"
+      } else {
+        vif_column <- colnames(vif_results)[1]
+      }
     }
+    vif_label <- "VIF"
+    table_title <- "Multicollinearity Assessment"
+  }
+
+  # Convert to data frame
+  vif_df <- data.frame(
+    Predictor = rownames(vif_results),
+    VIF_Value = vif_results[, vif_column],
+    stringsAsFactors = FALSE
   )
 
   # Identify problematic predictors
