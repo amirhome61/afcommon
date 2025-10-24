@@ -10,8 +10,9 @@
 #'
 #' @return A ggplot2 object
 #'
-#' @import ggplot2
-#' @import dplyr
+#' @importFrom ggplot2 ggplot aes geom_histogram annotate labs geom_bar geom_text
+#' @importFrom dplyr group_by summarise mutate
+#' @importFrom rlang .data
 #'
 #' @examples
 #' \dontrun{
@@ -1649,7 +1650,7 @@ af_plot_combinations_chart <- function(
 #' @return A ggplot2 object
 #'
 #' @import ggplot2
-#' @importFrom qqplotr stat_qq_point stat_qq_line stat_qq_band
+#' @importFrom qqplotr
 #'
 #' @examples
 #' \dontrun{
