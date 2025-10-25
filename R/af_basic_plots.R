@@ -1675,8 +1675,6 @@ af_plot_combinations_chart <- function(
 #'
 #' @return A ggplot2 object
 #'
-#'
-#'
 #' @import ggplot2
 #' @importFrom qqplotr stat_qq_band stat_qq_line stat_qq_point
 #'
