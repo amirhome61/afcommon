@@ -34,6 +34,7 @@ if (af_is_in_rmd()) {
   options(repr.plot.width = 6, repr.plot.height = 4)
 }
 
+
 }
 \seealso{
 \code{\link[base]{interactive}} for detecting interactive sessions

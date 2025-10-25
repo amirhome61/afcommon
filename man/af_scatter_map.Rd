@@ -42,4 +42,5 @@ af_scatter_map(df, "country_code", "HDI", "total_extremism", "region", "linear")
 af_scatter_map(df, "country_code", "HDI", "total_extremism", NULL, NULL)
 }
 
+
 }

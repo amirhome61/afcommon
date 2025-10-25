@@ -63,4 +63,5 @@ af_create_y_plot(mtcars, "mpg", group_var = "cyl",
                  plot_types = c("histogram", "density"), title = "MPG Distribution")
 }
 
+
 }
