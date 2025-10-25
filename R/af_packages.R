@@ -191,7 +191,7 @@ af_release_package <- function(
 #' @importFrom desc desc
 #' @import dplyr
 #' @importFrom git2r init
-#' @importFrom nremotes install_github
+#' @importFrom remotes install_github
 #' @importFrom usethis create_package use_mit_license
 #'
 #' @examples
@@ -321,7 +321,7 @@ af_create_package <- function(
 
   cat(
     sprintf(
-      "# Install and load the newly released package from GitHub\nremotes::install_github(paste0('%s@v', new_version))\nlibrary('%s', character.only = TRUE)\n\n",
+      "# Install and load the newly released package from GitHub\remotes::install_github(paste0('%s@v', new_version))\nlibrary('%s', character.only = TRUE)\n\n",
       github_repo %||% "",
       package_name
     ),
