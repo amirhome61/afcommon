@@ -18,8 +18,6 @@
 #'
 #' @return (character) A formatted interpretation text describing the matching analysis, balance assessment, estimation method, and treatment effect results with statistical significance
 #'
-#' @importFrom marginaleffects avg_comparisons
-#'
 #' @export
 af_interpret_matching <- function(
   avg_comp_results, # Results from marginaleffects::avg_comparisons
