@@ -18,6 +18,8 @@
 #'
 #' @return (character) A formatted interpretation text describing the matching analysis, balance assessment, estimation method, and treatment effect results with statistical significance
 #'
+#' @importFrom marginaleffects avg_comparisons
+#'
 #' @export
 af_interpret_matching <- function(
   avg_comp_results, # Results from marginaleffects::avg_comparisons
@@ -116,10 +118,10 @@ The estimated effect was %s (SE = %s, p = %.3f), %s.",
 #'
 #' @return (list) A named list with two elements: df (data frame containing estimates, p-values, confidence intervals, and significance stars for all models) and plot (ggplot object comparing matched and unmatched treatment effects across groups and outcomes)
 #'
+#'
 #' @import dplyr
-#' @import MatchIt
-#' @import broom
 #' @import ggplot2
+#' @importFrom rlang sym
 #'
 #' @export
 af_match_compare <- function(

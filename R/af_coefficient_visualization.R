@@ -79,8 +79,10 @@ af_coef_and_ci_table <- function(models, cov_name) {
 #'
 #' @return (ggplot) A ggplot object displaying the coefficient estimates and confidence intervals
 #'
+#'
+#'
 #' @import ggplot2
-#' @import scales
+#' @importFrom scales number_format
 #'
 #' @export
 af_coef_and_ci_plot <- function(coef_ci_table) {

@@ -30,6 +30,10 @@
 #' 5. Push commits and tag to GitHub.
 #' 6. Create a GitHub release with the provided release message.
 #'
+#' @importFrom desc desc
+#' @importFrom devtools document
+#' @import dplyr
+#'
 #' @examples
 #' \dontrun{
 #' af_release_package(
@@ -183,6 +187,12 @@ af_release_package <- function(
 #' 5. Adds GitHub remote and pushes initial commit if `github_repo` is provided.
 #' 6. Creates a `release_<package>.R` script in the package root that sources `af_packages.R`
 #'    from the installed `afcommon` library and calls `af_release_package()` for this package.
+#'
+#' @importFrom desc desc
+#' @import dplyr
+#' @importFrom git2r init
+#' @importFrom nremotes install_github
+#' @importFrom usethis create_package use_mit_license
 #'
 #' @examples
 #' \dontrun{

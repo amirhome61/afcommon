@@ -11,9 +11,8 @@
 #'
 #' @return (list) A named list with three elements: numeric, binary, and categorical, each containing a gt table object or NULL if no variables of that type exist
 #'
-#' @import dplyr
-#' @import gt
-#' @importFrom stats median sd quantile IQR
+#'
+#'
 #'
 #' @examples
 #' results <- af_descriptive(mtcars)
@@ -166,8 +165,8 @@ af_descriptive <- function(df, var_list = NULL) {
 #'
 #' @return (gt table) A gt table summarizing the data dictionary information
 #'
-#' @import dplyr
-#' @import gt
+#'
+#'
 #'
 #' @examples
 #' data_dict <- af_create_data_dictionary(mtcars)

@@ -192,6 +192,8 @@ af_stargazer <- function(
 #'
 #' @return A character string containing the formatted regression table notes
 #'
+#' @import dplyr
+#'
 #' @examples
 #' \dontrun{
 #' # Single model
@@ -464,7 +466,6 @@ af_create_regression_notes <- function(
 #'
 #' @return (character vector) An unnamed character vector containing coefficient names in the order they appear in stargazer output
 #'
-#' @import stargazer
 af_get_stargazer_order <- function(df, models) {
   # The function expands categorical variables into their individual levels (excluding the reference level)
   # while keeping numeric variables as-is. For categorical variables, it creates separate named entries for
@@ -504,7 +505,6 @@ af_get_stargazer_order <- function(df, models) {
 #'
 #' @return (character vector) A character vector of formatted display names in the order of coefficients, with categorical levels in brackets and interactions formatted with multiplication symbols
 #'
-#' @import stargazer
 #'
 #' @examples
 #' \dontrun{

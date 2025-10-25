@@ -107,8 +107,10 @@ af_interpret_cronbach <- function(alpha_result) {
 #'
 #' @return List containing the fitted CFA model, fit measures table, predicted latent scores, and updated data frame
 #'
-#' @import lavaan
-#' @import psych
+#'
+#' @import ggplot2
+#' @importFrom lavaan cfa lavPredict
+#' @importFrom psych alpha
 #'
 #' @export
 af_cfa <- function(
@@ -323,8 +325,9 @@ af_check_order <- function(
 #' @param model (Optional) Custom CFA model specification
 #' @return List containing updated data frame with latent scores, fit results by group,
 #' CFA results table, distribution plots, and correlation plots
-#' @import lavaan
-#' @import ggplot2
+#'
+#' @importFrom rlang sym
+#'
 #' @export
 af_cfa_between_group <- function(
   df,
@@ -408,7 +411,10 @@ af_cfa_between_group <- function(
 #' @param nrotation Rotation of the plot (default: 1)
 #' @param edge_labels Logical indicating whether to display edge labels (default: TRUE)
 #' @return SEM plot object
-#' @import semPlot
+#'
+#' @importFrom semPlot semPaths semPlotModel
+#' @importFrom semptools drop_nodes
+#'
 #' @export
 af_create_sem_plot <- function(
   fit,
@@ -486,7 +492,9 @@ af_create_sem_plot <- function(
 #'
 #' @param cfa_tbl Data frame containing CFA results
 #' @return gt table object with formatted CFA results and source notes
-#' @import gt
+#'
+#' @importFrom gt tab_source_note
+#'
 #' @export
 af_gt_cfa_results_tbl <- function(cfa_tbl) {
   gt_table <- gt(cfa_tbl) %>%
@@ -640,8 +648,9 @@ af_clean_cfa_model <- function(df, model) {
 #'
 #' @return (list) A named list containing: fits (list of four CFA model results), measEqOut (semTools comparison object), result_text (interpretation text), plots (list of ggplot objects for latent comparison and difference plots), and differences (list of difference statistics and correlations between models)
 #'
+#'
 #' @import ggplot2
-#' @import semTools
+#' @importFrom semTools compareFit
 #'
 #' @export
 af_measurement_invariance <- function(

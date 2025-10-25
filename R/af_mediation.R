@@ -13,7 +13,8 @@
 #'
 #' @return (mediate) A mediate object from the mediation package containing ACME, ADE, total effect, and proportion mediated estimates with confidence intervals
 #'
-#' @import mediation
+#'
+#' @importFrom mediation mediate
 #'
 #' @export
 af_mediation_analysis <- function(
@@ -123,6 +124,7 @@ af_interpret_mediate_results <- function(
 #'
 #' @return (ggplot) A ggplot object displaying the three effect types with their confidence intervals on a horizontal axis
 #'
+#'
 #' @import ggplot2
 #'
 #' @export
@@ -157,6 +159,7 @@ af_plot_mediation_effects <- function(med_results) {
 #' @param med_results (mediate) A mediate object from the mediation package containing fitted models
 #'
 #' @return (ggplot) A ggplot object displaying the mediation path diagram with nodes for treatment, mediator, and outcome, and edges labeled with path coefficients
+#'
 #'
 #' @import ggplot2
 #'
@@ -235,8 +238,7 @@ af_plot_mediation_coefficients <- function(med_results) {
 #'
 #' @return (gt) A formatted gt table object with mediation analysis results including effect estimates, confidence intervals, and p-values
 #'
-#' @import dplyr
-#' @import gt
+#'
 #'
 #' @export
 af_create_mediation_table <- function(med_results) {

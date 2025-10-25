@@ -4,6 +4,9 @@
 #' @param filename Output HTML filename
 #' @param title Page title
 #' @return Invisible NULL, creates HTML file as side effect
+#'
+#' @importFrom gt as_raw_html
+#'
 #' @export
 af_print_wide_gt <- function(
   gt_tbl,
@@ -56,6 +59,9 @@ af_print_wide_gt <- function(
 #' @param stub_col Name for the stub column containing original column names (default: "Variable")
 #'
 #' @return A gt table object
+#'
+#' @importFrom gt gt tab_header
+#'
 #' @export
 af_transpose_gt <- function(
   data,
@@ -137,9 +143,10 @@ af_transpose_gt <- function(
 #'
 #' @return A gt table object
 #'
-#' @import tidyr
-#' @import gt
-#' @import dplyr
+#'
+#' @importFrom gt fmt_number gt tab_header
+#' @importFrom rlang sym
+#' @importFrom tidyr pivot_wider
 #'
 #' @examples
 #' # Example usage:
@@ -253,9 +260,11 @@ af_create_xy_table <- function(
 #'
 #' @return A gt table object
 #'
-#' @import tidyr
-#' @import gt
+#'
 #' @import dplyr
+#' @importFrom gt fmt_number gt
+#' @importFrom rlang sym
+#' @importFrom tidyr pivot_longer pivot_wider
 #'
 #' @examples
 #' # Basic usage without aggregation:
@@ -370,6 +379,10 @@ af_create_x_multi_y_table <- function(
     gt::fmt_number(decimals = decimals)
 }
 
+#' @import dplyr
+#' @importFrom rlang := sym
+#' @importFrom tools toTitleCase
+#'
 af_count_categorical_levels <- function(
   data,
   variable_name,

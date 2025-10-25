@@ -10,7 +10,8 @@
 #'
 #' @return NULL (prints interpretation text to console via cat)
 #'
-#' @import lavaan
+#'
+#' @importFrom lavaan fitMeasures parameterEstimates
 #'
 #' @export
 af_sem_interpretation <- function(model) {

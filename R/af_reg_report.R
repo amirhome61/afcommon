@@ -388,8 +388,10 @@ af_rr_poisson <- function(model, df, y_name, x_list) {
 #'
 #' @return (character) HTML-formatted text describing the ordinal logistic regression results, including model fit statistics and percentage effects on odds of category transition
 #'
-#' @import lmtest
-#' @import DescTools
+#'
+#' @importFrom DescTools PseudoR2
+#' @importFrom lmtest coeftest lrtest
+#' @importFrom stats logLik
 #'
 #' @export
 af_rr_polr <- function(model, df, y_name, x_list, digits) {
@@ -560,8 +562,10 @@ af_rr_polr <- function(model, df, y_name, x_list, digits) {
 #'
 #' @return (character) HTML-formatted text describing the logistic regression results, including model fit statistics and percentage effects on odds ratios
 #'
-#' @import lmtest
-#' @import DescTools
+#'
+#' @importFrom DescTools PseudoR2
+#' @importFrom lmtest lrtest
+#' @importFrom stats logLik
 #'
 #' @export
 af_rr_logistic <- function(model, df, y_name, x_list, digits) {
@@ -727,7 +731,8 @@ af_rr_logistic <- function(model, df, y_name, x_list, digits) {
 #'
 #' @return (character) A single string with all placeholders replaced by their corresponding values
 #'
-#' @import stringr
+#'
+#' @importFrom stringr str_c str_replace_all
 #'
 #' @export
 af_rr_par <- function(template, replacement) {

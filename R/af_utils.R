@@ -25,8 +25,6 @@
 #'   options(repr.plot.width = 6, repr.plot.height = 4)
 #' }
 #'
-#' @importFrom knitr is_html_output
-#' @importFrom rlang is_true
 #'
 #' @seealso \code{\link[base]{interactive}} for detecting interactive sessions
 #'
@@ -279,9 +277,8 @@ af_add_brackets_to_levels <- function(x) {
 #'
 #' @return (gt) A formatted gt table object containing coefficient estimates, standard errors, t-statistics, and p-values
 #'
-#' @import lmtest
-#' @import gt
-#' @import dplyr
+#'
+#' @importFrom lmtest coeftest
 #'
 #' @examples
 #' model <- lm(mpg ~ hp + wt, data = mtcars)
@@ -384,6 +381,7 @@ af_ggsave <- function(
 #' @param country_critical_pct (numeric) Minimum proportion of complete rows required to keep a country in each wave. Default is 0.7
 #'
 #' @return (list) A named list with three elements: df (cleaned data frame with no missing values in critical variables), problematic_countries (list of removed countries by wave), and percentages (data frame showing missing percentages for remaining countries)
+#'
 #'
 #' @import dplyr
 #'
@@ -707,7 +705,8 @@ af_order_df <- function(df, var_name) {
 #'
 #' @return (data.frame) A transposed data frame with original columns as rows and first column values as new column names
 #'
-#' @import tidyr
+#'
+#' @importFrom tidyr pivot_longer pivot_wider
 #'
 #' @export
 af_transpose_df <- function(df) {
@@ -1032,6 +1031,8 @@ af_last <- function(v) {
 #'
 #' @return Either a or b depending on the condition
 #'
+#' @importFrom gt gtsave
+#'
 #' @export
 af_select_val <- function(cond, a, b) if (cond) return(a) else return(b)
 
@@ -1047,7 +1048,8 @@ af_select_val <- function(cond, a, b) if (cond) return(a) else return(b)
 #'
 #' @return NULL (called for side effect of saving file)
 #'
-#' @import gt
+#'
+#' @importFrom gt gtsave
 #'
 #' @export
 af_gtsave <- function(table, output_file) {

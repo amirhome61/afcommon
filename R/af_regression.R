@@ -11,7 +11,8 @@
 #'
 #' @return (ggplot) A ggplot object displaying standardized coefficients with confidence intervals and significance indicators
 #'
-#' @import sjPlot
+#'
+#' @import ggplot2
 #'
 #' @export
 af_plot_coef <- function(model, covs = NULL, palette = "Color") {
@@ -53,7 +54,9 @@ af_plot_coef <- function(model, covs = NULL, palette = "Color") {
 #'
 #' @return (ggplot) A ggplot object displaying standardized coefficients from all models with legend
 #'
-#' @import sjPlot
+#'
+#' @import ggplot2
+#' @importFrom sjPlot plot_models
 #'
 #' @export
 af_multi_plot_coef <- function(models, covs = NULL, palette = "Pastel1") {
@@ -91,7 +94,9 @@ af_multi_plot_coef <- function(models, covs = NULL, palette = "Pastel1") {
 #'
 #' @return (ggplot) A ggplot object displaying the interaction effects with legend at bottom
 #'
-#' @import sjPlot
+#'
+#' @import ggplot2
+#' @importFrom sjPlot plot_model
 #'
 #' @export
 af_plot_interaction <- function(
@@ -350,7 +355,6 @@ af_build_formula <- function(
 #'
 #' @return (gt) A formatted gt table object containing model summaries with coefficients, standard errors, and fit statistics
 #'
-#' @import modelsummary
 #'
 #' @export
 af_modelsummary <- function(
@@ -440,6 +444,8 @@ af_modelsummary <- function(
 #' @param significance_levels (numeric vector) Thresholds for significance stars. Default is c(0.05, 0.01, 0.001)
 #'
 #' @return (character) A formatted note string containing all relevant table information with proper punctuation
+#'
+#' @import dplyr
 #'
 #' @export
 af_create_regression_notes <- function(
@@ -645,7 +651,8 @@ af_create_regression_notes <- function(
 #'
 #' @return (list) A named list with two elements: result_line (character string with test interpretation) and pval (numeric p-value from the test)
 #'
-#' @import performance
+#'
+#' @importFrom performance check_heteroscedasticity
 #'
 #' @export
 af_hetero_test <- function(model) {
@@ -792,6 +799,9 @@ af_prepare_regression <- function(df, dependent_var, independent_vars) {
 #'   \item{max_vif}{The maximum VIF value found}
 #'   \item{problematic_predictors}{Vector of predictor names exceeding threshold}
 #'
+#' @importFrom car vif
+#' @importFrom gt cell_fill cells_body cells_column_labels cols_align cols_label fmt_number gt tab_footnote tab_header tab_style
+#'
 #' @examples
 #' # Basic usage
 #' model <- lm(y ~ x1 + x2 + x3, data = mydata)
@@ -803,9 +813,6 @@ af_prepare_regression <- function(df, dependent_var, independent_vars) {
 #' model_int <- lm(y ~ x1 * x2 + x3, data = mydata)
 #' result <- af_vif_test(model_int, interactions = TRUE)
 #'
-#' @import car
-#' @import gt
-#' @import dplyr
 #' @export
 af_vif_test <- function(model, interactions = FALSE, threshold = NULL) {
   # Input validation

@@ -10,8 +10,10 @@
 #'
 #' @return A ggplot2 object
 #'
-#' @importFrom ggplot2 ggplot aes geom_histogram annotate labs geom_bar geom_text
-#' @importFrom dplyr group_by summarise mutate
+#'
+#'
+#' @import dplyr
+#' @import ggplot2
 #' @importFrom rlang .data
 #'
 #' @examples
@@ -94,6 +96,11 @@ af_plot_histogram <- function(df, y_name, nbins = 50) {
 #' @param legend_label Character string for custom legend title. If NULL, uses grouping variable name(s). Default is NULL
 #'
 #' @return A ggplot object
+#'
+#'
+#' @import dplyr
+#' @import ggplot2
+#' @importFrom rlang sym
 #'
 #' @export
 #'
@@ -377,6 +384,12 @@ af_create_xy_plot <- function(
 #'
 #' @return A ggplot object
 #'
+#'
+#' @import dplyr
+#' @import ggplot2
+#' @importFrom rlang sym
+#' @importFrom tidyr pivot_longer
+#'
 #' @export
 #'
 #' @examples
@@ -598,6 +611,11 @@ af_create_x_multi_y_plot <- function(
 #'
 #' @return A ggplot2 object
 #'
+#'
+#' @import dplyr
+#' @import ggplot2
+#' @importFrom rlang sym
+#'
 #' @examples
 #' \dontrun{
 #' # Basic histogram
@@ -611,9 +629,6 @@ af_create_x_multi_y_plot <- function(
 #'                  plot_types = c("histogram", "density"), title = "MPG Distribution")
 #' }
 #'
-#' @import ggplot2
-#' @import dplyr
-#' @importFrom rlang sym
 #'
 #' @export
 af_create_y_plot <- function(
@@ -953,8 +968,12 @@ af_create_y_plot <- function(
 #'
 #' @return A ggplot2 object
 #'
-#' @import ggplot2
+#'
+#'
 #' @import dplyr
+#' @import ggplot2
+#' @importFrom rlang := sym
+#' @importFrom scales percent
 #'
 #' @examples
 #' \dontrun{
@@ -1177,8 +1196,11 @@ af_create_xy_bar <- function(
 #'
 #' @return A ggplot2 object
 #'
-#' @import ggplot2
+#'
+#'
 #' @import dplyr
+#' @import ggplot2
+#' @importFrom rlang sym
 #'
 #' @examples
 #' \dontrun{
@@ -1429,6 +1451,12 @@ af_create_heatmap <- function(
 #'                        whose label contains any of these strings will not be included.
 #'                        Defaults to NULL (no string exclusion filtering).
 #' @return A ggplot object representing the horizontal bar chart.
+#'
+#'
+#' @import dplyr
+#' @import ggplot2
+#' @importFrom rlang syms
+#'
 #' @examples
 #' # Assuming you have a dataframe 'my_data' with columns 'A', 'B', 'C'
 #' # my_data <- data.frame(A = sample(letters[1:2], 100, replace = TRUE),
@@ -1456,8 +1484,6 @@ af_create_heatmap <- function(
 #' # try(af_plot_combinations_chart(dummy_df, c("pe_left_center_right"), threshold = 101))
 #' # try(af_plot_combinations_chart(dummy_df, c("pe_left_center_right"), exclude_strings = 123))
 #'
-#' @import ggplot2
-#' @import dplyr
 #'
 #' @export
 af_plot_combinations_chart <- function(
@@ -1649,8 +1675,10 @@ af_plot_combinations_chart <- function(
 #'
 #' @return A ggplot2 object
 #'
+#'
+#'
 #' @import ggplot2
-#' @importFrom qqplotr
+#' @importFrom qqplotr stat_qq_band stat_qq_line stat_qq_point
 #'
 #' @examples
 #' \dontrun{
@@ -1686,9 +1714,11 @@ af_plot_qq <- function(df, var_name) {
 #'
 #' @return (ggplot) A ggplot object showing either a histogram (numeric) or bar chart (categorical)
 #'
-#' @import ggplot2
+#'
+#'
 #' @import dplyr
-#' @import rlang
+#' @import ggplot2
+#' @importFrom rlang .data
 #'
 #' @examples
 #' af_plot_histogram(mtcars, "mpg", nbins = 30)
@@ -1753,6 +1783,8 @@ af_plot_histogram <- function(df, y_name, nbins = 50) {
 #'
 #' @return (ggplot) A ggplot object displaying the distribution
 #'
+#'
+#'
 #' @import ggplot2
 #'
 #' @examples
@@ -1804,7 +1836,10 @@ af_plot_distribution <- function(df, y_name, title = " ", nbins = 50) {
 #'
 #' @return (ggplot) A ggplot object displaying the density distribution with frequency on the y-axis
 #'
+#'
+#'
 #' @import ggplot2
+#' @importFrom rlang .data
 #'
 #' @examples
 #' af_plot_density(mtcars, "mpg")
@@ -1842,7 +1877,10 @@ af_plot_density <- function(df, y_name) {
 #'
 #' @return (ggplot) A ggplot object displaying the bar chart with count on the y-axis
 #'
+#'
+#'
 #' @import ggplot2
+#' @importFrom rlang .data
 #'
 #' @examples
 #' af_plot_barchart(mtcars, "cyl")
@@ -1882,9 +1920,12 @@ af_plot_barchart <- function(df, y_name) {
 #'
 #' @return (ggplot) A ggcorrplot object displaying the correlation matrix with circle method and lower triangle layout
 #'
+#'
+#'
 #' @import dplyr
-#' @import ggcorrplot
-#' @import viridis
+#' @importFrom ggcorrplot ggcorrplot
+#' @importFrom stats cor
+#' @importFrom viridis viridis
 #'
 #' @examples
 #' af_plot_correlation(mtcars)
@@ -1935,7 +1976,10 @@ af_plot_correlation <- function(df, vars = NULL, title = "Correlation Plot") {
 #'
 #' @return (list) A list of ggplot objects, one correlation plot for each group value
 #'
+#'
+#'
 #' @import dplyr
+#' @importFrom rlang .data
 #'
 #' @examples
 #' plots <- af_plot_correlation_per_group(mtcars, "cyl")
@@ -1984,7 +2028,10 @@ af_plot_correlation_per_group <- function(
 #'
 #' @return (list) A list of ggplot objects, one distribution plot for each group value
 #'
+#'
+#'
 #' @import dplyr
+#' @importFrom rlang .data
 #'
 #' @examples
 #' plots <- af_plot_distribution_per_group(mtcars, "mpg", "cyl")
@@ -2039,6 +2086,9 @@ af_plot_distribution_per_group <- function(
 #'
 #' @return Invisibly returns the combined plot object
 #'
+#'
+#' @import ggplot2
+#'
 #' @examples
 #' # Basic usage
 #' af_combine_plots(list(plot1, plot2), ncol = 2)
@@ -2061,9 +2111,6 @@ af_plot_distribution_per_group <- function(
 #'                  row_spacing = 0.1,
 #'                  col_spacing = 0.1)
 #'
-#' @import grid
-#' @import gridExtra
-#' @import ggplot2
 #'
 #' @export
 af_combine_plots <- function(
@@ -2299,7 +2346,9 @@ af_combine_plots <- function(
 #'
 #' @return A grob object representing the legend
 #'
-#' @import grid
+#'
+#' @import ggplot2
+#'
 #' @examples
 #' #' legend_specs <- list(
 #'  c("red", "dashed"),
@@ -2397,7 +2446,6 @@ af_create_custom_legend <- function(legend_specs, labels) {
 #'
 #' @return NULL (called for side effects of saving file and optionally displaying plot)
 #'
-#' @import ggplot2
 #'
 #' @examples
 #' p <- ggplot(mtcars, aes(x = mpg)) + geom_histogram()

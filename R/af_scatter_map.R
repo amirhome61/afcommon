@@ -11,6 +11,10 @@
 #' @param line_type Character string specifying the type of trend line to add: "linear", "smooth", or NULL for no line
 #'
 #' @return A ggplot2 object
+#'
+#' @import ggplot2
+#' @importFrom rlang sym
+#'
 #' @export
 #'
 #' @examples
@@ -22,9 +26,6 @@
 #' af_scatter_map(df, "country_code", "HDI", "total_extremism", NULL, NULL)
 #' }
 #'
-#' @import ggplot2
-#' @import rlang
-#' @import viridis
 #'
 #' @export
 af_scatter_map <- function(
